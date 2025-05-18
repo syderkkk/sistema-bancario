@@ -1,13 +1,13 @@
 ## 🔧 1. Configuración Inicial
 - [✅] Crear entorno virtual y archivo `.env` para variables sensibles
 - [✅ ] Instalar dependencias: Django, django-environ, psycopg2, crispy-forms, etc.
-- [ ] Crear proyecto y apps modulares: `usuarios`, `cuentas`, `transacciones`, etc.
+- [✅] Crear proyecto y apps modulares: `usuarios`, `cuentas`, `transacciones`, etc.
 - [ ] Configurar settings para separar desarrollo y producción
 
 ## 🛠️ 2. Modelado de Datos
-- [ ] Modelos normalizados y relaciones claras
-- [ ] Usuario personalizado si es necesario
-- [ ] Managers/servicios para lógica de negocio
+- [✅] Modelos normalizados y relaciones claras
+- [✅] Usuario personalizado si es necesario
+- [✅ ] Managers/servicios para lógica de negocio
 
 ## 🔐 3. Autenticación y Seguridad
 - [ ] Registro, login, logout

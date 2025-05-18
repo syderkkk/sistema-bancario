@@ -1,7 +1,7 @@
 from django.db import models
 from cuentas.models import CuentaBancaria
 
-class Transaccion(models.model):
+class Transaccion(models.Model):
     TIPO_CHOICES = [
         ('DEPOSITO', 'Deposito'),
         ('RETIRO', 'Retiro'),
