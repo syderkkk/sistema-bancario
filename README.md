@@ -3,7 +3,11 @@
 Sistema bancario / Django
 
 ```sh
-   python -m venv venv
+   pip install virtualenv
+```
+
+```sh
+   virtualenv venv
 ```
 
 ```sh
