@@ -20,18 +20,17 @@ class RegistroUsuarioForm(UserCreationForm):
         password2 = self.cleaned_data.get('password2')
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Las contraseñas no coinciden.")
-        return password2
-    
+        return password2                                                                
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
-            # El perfil se crea automáticamente por la señal, solo lo actualizamos:
             profile = user.profile
             profile.fecha_nacimiento = self.cleaned_data['fecha_nacimiento']
             profile.direccion = self.cleaned_data['direccion']
             profile.telefono = self.cleaned_data['telefono']
-            profile.numero_cuenta = generar_numero_cuenta()
+            #profile.numero_cuenta = generar_numero_cuenta()
             profile.save()
         return user

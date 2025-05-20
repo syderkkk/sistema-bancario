@@ -1,0 +1,10 @@
+{% extends "usuarios/base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Bienvenido, {{ user.first_name }} {{ user.last_name }}!</h2>
+    <p>Panel principal</p>
+</div>
+{% endblock %}
