@@ -1,0 +1,45 @@
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'cuentas/tarjeta.css' %}">
+
+<div class="card-container">
+    <div class="credit-card" id="tarjeta">
+        <!-- Cara frontal -->
+        <div class="card-front">
+            <div>
+                <div class="chip"></div>
+                <div class="card-logo">CPP</div>
+            </div>
+            <div class="card-number">
+                {{ tarjeta.numero_tarjeta|slice:":4" }} {{ tarjeta.numero_tarjeta|slice:"4:8" }} {{ tarjeta.numero_tarjeta|slice:"8:12" }} {{ tarjeta.numero_tarjeta|slice:"12:16" }}
+            </div>
+            <div class="card-details">
+                <div>
+                    <div style="font-size:0.8rem;">VENCE FIN DE</div>
+                    <div>{{ tarjeta.fecha_vencimiento|date:"m/y" }}</div>
+                </div>
+                <div>
+                    <div style="font-size:0.8rem;">TITULAR</div>
+                    <div>{{ tarjeta.cuenta.usuario.first_name|default:"Usuario" }} {{ tarjeta.cuenta.usuario.last_name|default:"" }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Cara trasera -->
+        <div class="card-back">
+            <div class="magnetic-strip"></div>
+            <div class="cvv-label">CVV</div>
+            <div class="cvv-value">{{ tarjeta.ccv }}</div>
+        </div>
+    </div>
+    <div class="card-info-text">
+    <small>Haz click en la tarjeta para ver el reverso</small>
+</div>
+</div>
+
+<script>
+document.getElementById('tarjeta').addEventListener('click', function() {
+    this.classList.toggle('flipped');
+});
+</script>
+{% endblock %}

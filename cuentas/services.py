@@ -1,6 +1,9 @@
 from django.db import transaction
 from transacciones.models import Transaccion
-from .models import CuentaBancaria
+from .models import CuentaBancaria, TarjetaBancaria
+import random
+from datetime import date, timedelta
+
 
 def generar_numero_cuenta():
     """
@@ -73,3 +76,30 @@ def transferir_fondos(cuenta_origen, cuenta_destino, monto, descripcion=""):
         monto=monto,
         descripcion=descripcion
     )
+
+def generar_numero_tarjeta():
+    """
+    Función para generar un número de tarjeta único de 16 digitos.
+    """
+    while True:
+        numero = str(random.randint(10**15, 10**16 - 1))
+        if not TarjetaBancaria.objects.filter(numero_tarjeta=numero).exists():
+            return numero
+        
+def generar_ccv():
+    """
+    Función para generar un código CCV único de 3 digitos.
+    """
+    return str(random.randint(100, 999))
+
+def crear_tarjeta_para_cuenta(cuenta):
+    numero_tarjeta = generar_numero_tarjeta()
+    ccv = generar_ccv()
+    fecha_vencimiento = date.today() + timedelta(days=365*4)  # 4 años
+    tarjeta = TarjetaBancaria.objects.create(
+        cuenta=cuenta,
+        numero_tarjeta=numero_tarjeta,
+        fecha_vencimiento=fecha_vencimiento,
+        ccv=ccv
+    )
+    return tarjeta

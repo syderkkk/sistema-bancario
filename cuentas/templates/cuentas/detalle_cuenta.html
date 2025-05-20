@@ -1,0 +1,15 @@
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Cuenta {{ cuenta.numero_cuenta }}</h3>
+    <p>Saldo: {{ cuenta.saldo }}</p>
+    {% if cuenta.tarjeta.exists %}
+        <a href="{% url 'detalle_tarjeta' cuenta.tarjeta.first.id %}" class="btn btn-info" target="_blank">Ver Tarjeta</a>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="generar_tarjeta" class="btn btn-primary">Generar Tarjeta</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

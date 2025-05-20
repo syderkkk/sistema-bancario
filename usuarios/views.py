@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
 
 class RegistroUsuarioView(CreateView):
     """
@@ -30,17 +33,17 @@ def landing_page(request):
     """
     return render(request, 'usuarios/landing.html')
 
+from cuentas.services import crear_cuenta
 @login_required
 def home(request):
     """
     Vista para la página de inicio después de iniciar sesión.
     """
-    return render(request, 'usuarios/home.html')
-
-
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-from django.views.decorators.http import require_POST
+    cuentas = request.user.cuentas.all()
+    if request.method == 'POST' and 'crear_cuenta' in request.POST:
+        crear_cuenta(request.user, None)
+        return redirect('home')
+    return render(request, 'usuarios/home.html', {'cuentas': cuentas})
 
 @require_POST
 def logout_view(request):
@@ -49,3 +52,5 @@ def logout_view(request):
     """
     logout(request)
     return redirect('landing_page')
+
+

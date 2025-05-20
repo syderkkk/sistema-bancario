@@ -1,0 +1,94 @@
+
+.card-container {
+    perspective: 1000px;
+    width: 350px;
+    margin: 40px auto;
+}
+.credit-card {
+    width: 350px;
+    height: 200px;
+    border-radius: 20px;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+.credit-card.flipped {
+    transform: rotateY(180deg);
+}
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    backface-visibility: hidden;
+    color: #fff;
+}
+.card-front {
+    background: linear-gradient(135deg, #004481 60%, #00b5e2 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+}
+.card-back {
+    background: linear-gradient(135deg, #004481 60%, #00b5e2 100%);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+}
+
+.card-back .magnetic-strip {
+    background: #222;
+    height: 40px;
+    width: 100%;
+    margin-bottom: 30px;
+    border-radius: 6px;
+}
+
+.card-info-text {
+    text-align: center;
+    margin-top: 10rem;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.chip {
+    width: 50px;
+    height: 35px;
+    background: #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.card-logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: #ffd600;
+}
+.card-number {
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+}
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+}
+.cvv-label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+.cvv-value {
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    background: #fff;
+    color: #222;
+    padding: 4px 12px;
+    border-radius: 6px;
+    display: inline-block;
+}

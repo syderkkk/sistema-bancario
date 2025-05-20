@@ -1,10 +1,21 @@
-{% extends "usuarios/base.html" %}
-
-{% block title %}Inicio{% endblock %}
-
 {% block content %}
 <div class="container mt-5">
     <h2>Bienvenido, {{ user.first_name }} {{ user.last_name }}!</h2>
-    <p>Panel principal</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="crear_cuenta" class="btn btn-success mb-3">Obtener nueva cuenta bancaria</button>
+    </form>
+    <h4>Tus cuentas bancarias:</h4>
+    <ul>
+        {% for cuenta in cuentas %}
+        <li>
+            <a href="{% url 'detalle_cuenta' cuenta.id %}">
+                Número de cuenta: {{ cuenta.numero_cuenta }} - Saldo: {{ cuenta.saldo }}
+            </a>
+        </li>
+        {% empty %}
+        <li>No tienes cuentas bancarias.</li>
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}
