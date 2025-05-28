@@ -3,7 +3,11 @@
 Sistema bancario / Django
 
 ```sh
-   python -m venv venv
+   pip install virtualenv
+```
+
+```sh
+   virtualenv venv
 ```
 
 ```sh
@@ -12,4 +16,12 @@ Sistema bancario / Django
 
 ```sh
    pip install -r requirements.txt
+```
+
+```sh
+   python manage.py makemigrations
+```
+
+```sh
+   python manage.py migrate
 ```
