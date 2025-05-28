@@ -34,3 +34,33 @@ class RegistroUsuarioForm(UserCreationForm):
             #profile.numero_cuenta = generar_numero_cuenta()
             profile.save()
         return user
+
+
+from .models import Profile
+class EditarPerfilForm(forms.ModelForm):
+    first_name = forms.CharField(label='Nombre', max_length=150, required=True)
+    last_name = forms.CharField(label='Apellido', max_length=150, required=True)
+    email = forms.EmailField(label='Correo electrónico', required=True)
+
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'email', 'fecha_nacimiento', 'direccion', 'telefono']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['first_name'].initial = user.first_name
+            self.fields['last_name'].initial = user.last_name
+            self.fields['email'].initial = user.email
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        user = profile.user
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+            profile.save()
+        return profile

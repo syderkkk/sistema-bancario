@@ -10,13 +10,18 @@
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                     <li class="nav-item">
+                        <a href="{% url 'home' %}" class="nav-link">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'editar_perfil' %}" class="nav-link">Mi perfil</a>
+                    </li>
+                    <li class="nav-item">
                         <span class="nav-link disabled">Hola, {{ user.first_name }}</span>
                     </li>
                     <li class="nav-item">
                         <form action="{% url 'logout' %}" method="post" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" class="nav-link btn btn-link">Cerrar
-                                sesión</button>
+                            <button type="submit" class="nav-link btn btn-link">Cerrar sesión</button>
                         </form>
                     </li>
                     {% else %}

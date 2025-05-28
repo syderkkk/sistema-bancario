@@ -1,7 +1,19 @@
 {% extends "usuarios/base.html" %}
 
-{% block title %}Página de Inicio{% endblock %}
+{% block title %}Bienvenido al Sistema Bancario{% endblock %}
 
 {% block content %}
-<h1 class="text-center mt-5">Bienvenido al Sistema Bancario</h1>
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="text-center w-100">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Banco" width="100" class="mb-4">
+        <h1 class="fw-bold mb-3">Bienvenido al <span class="text-primary">Sistema Bancario</span></h1>
+        <p class="lead text-muted mb-4">
+            Gestiona tus cuentas, realiza transferencias y controla tus finanzas de manera fácil y segura.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4 shadow">Iniciar sesión</a>
+            <a href="{% url 'registro' %}" class="btn btn-outline-success btn-lg px-4 shadow">Registrarse</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -58,24 +58,27 @@ def retirar_fondos(cuenta, monto, descripcion=""):
         descripcion=descripcion
     )
 
+
 def transferir_fondos(cuenta_origen, cuenta_destino, monto, descripcion=""):
     """
     Función para transferir fondos entre cuentas bancarias.
     """
+    from transacciones.models import Transaccion
     with transaction.atomic():
-        if cuenta_origen.saldo < monto:
-            raise ValueError("Saldo insuficiente")
+        # if cuenta_origen.saldo < monto:
+        #     raise ValueError("Saldo insuficiente")
         cuenta_origen.saldo -= monto
         cuenta_destino.saldo += monto
         cuenta_origen.save()
         cuenta_destino.save()
-    Transaccion.objects.create(
+    transaccion = Transaccion.objects.create(
         cuenta_origen=cuenta_origen,
         cuenta_destino=cuenta_destino,
         tipo='TRANSFERENCIA',
         monto=monto,
         descripcion=descripcion
     )
+    return transaccion
 
 def generar_numero_tarjeta():
     """

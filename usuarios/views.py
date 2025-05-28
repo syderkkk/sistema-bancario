@@ -18,6 +18,11 @@ class RegistroUsuarioView(CreateView):
     template_name = 'usuarios/registro.html'
     success_url = reverse_lazy('login')
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home')
+        return super().dispatch(request, *args, **kwargs)
+
 
 class CustomLoginView(LoginView):
     """
@@ -31,6 +36,8 @@ def landing_page(request):
     """
     Vista para la página de inicio.
     """
+    if request.user.is_authenticated:
+        return redirect('home')
     return render(request, 'usuarios/landing.html')
 
 from cuentas.services import crear_cuenta
@@ -53,4 +60,15 @@ def logout_view(request):
     logout(request)
     return redirect('landing_page')
 
-
+from .forms import EditarPerfilForm
+@login_required
+def editar_perfil(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = EditarPerfilForm(request.POST, instance=profile, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = EditarPerfilForm(instance=profile, user=request.user)
+    return render(request, 'usuarios/editar_perfil.html', {'form': form})

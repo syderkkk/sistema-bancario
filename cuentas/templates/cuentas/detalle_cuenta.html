@@ -1,15 +1,110 @@
+{% extends "usuarios/base.html" %}
 
 {% block content %}
 <div class="container mt-5">
-    <h3>Cuenta {{ cuenta.numero_cuenta }}</h3>
-    <p>Saldo: {{ cuenta.saldo }}</p>
-    {% if cuenta.tarjeta.exists %}
-        <a href="{% url 'detalle_tarjeta' cuenta.tarjeta.first.id %}" class="btn btn-info" target="_blank">Ver Tarjeta</a>
-    {% else %}
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" name="generar_tarjeta" class="btn btn-primary">Generar Tarjeta</button>
-        </form>
-    {% endif %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Cuenta bancaria</h4>
+                    <p><strong>Número de cuenta:</strong> {{ cuenta.numero_cuenta }}</p>
+                    <p><strong>Saldo actual:</strong> <span class="fs-4 text-success">S/. {{ cuenta.saldo }}</span></p>
+                    <p><strong>Fecha de creación:</strong> {{ cuenta.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                    
+                    <div class="d-flex justify-content-between gap-2 mb-3">
+                        {% if cuenta.tarjeta.exists %}
+                            <a href="{% url 'detalle_tarjeta' cuenta.tarjeta.first.id %}" 
+                               class="btn btn-secondary btn-sm flex-fill text-nowrap">
+                                <i class="bi bi-credit-card"></i> Ver Tarjeta
+                            </a>
+                        {% else %}
+                            <form method="post" class="flex-fill">
+                                {% csrf_token %}
+                                <button type="submit" name="generar_tarjeta" 
+                                        class="btn btn-primary btn-sm w-100 text-nowrap">
+                                    <i class="bi bi-plus-circle"></i> Generar Tarjeta
+                                </button>
+                            </form>
+                        {% endif %}
+                        <a href="{% url 'transferir' cuenta.id %}" 
+                           class="btn btn-outline-primary btn-sm flex-fill text-nowrap">
+                            <i class="bi bi-arrow-left-right"></i> Transferir
+                        </a>
+                        <form method="post" action="{% url 'eliminar_cuenta' cuenta.id %}" class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" 
+                                    class="btn btn-danger btn-sm w-100 text-nowrap"
+                                    onclick="return confirm('¿Estás seguro de que deseas eliminar esta cuenta? Esta acción no se puede deshacer.');">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Historial de transacciones</h5>
+                    {% if transacciones %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Monto</th>
+                                        <th>Cuenta destino/origen</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for t in transacciones %}
+                                    <tr>
+                                        <td>{{ t.fecha|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            {% if t.tipo == "DEPOSITO" %}
+                                                <span class="badge bg-secondary">Ingreso</span>
+                                            {% elif t.tipo == "RETIRO" %}
+                                                <span class="badge bg-dark">Salida</span>
+                                            {% elif t.tipo == "TRANSFERENCIA" %}
+                                                {% if t.cuenta_origen == cuenta %}
+                                                    <span class="badge bg-dark">Transferencia salida</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Transferencia ingreso</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if t.cuenta_origen == cuenta %}
+                                                <span class="text-danger">- S/. {{ t.monto }}</span>
+                                            {% else %}
+                                                <span class="text-success">+ S/. {{ t.monto }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if t.tipo == "TRANSFERENCIA" %}
+                                                {% if t.cuenta_origen == cuenta %}
+                                                    {{ t.cuenta_destino.numero_cuenta }}
+                                                {% else %}
+                                                    {{ t.cuenta_origen.numero_cuenta }}
+                                                {% endif %}
+                                            {% else %}
+                                                ---
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ t.descripcion|default:"-" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No hay transacciones registradas.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

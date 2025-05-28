@@ -1,0 +1,35 @@
+{% extends "usuarios/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success">
+        <h4 class="alert-heading">¡Transferencia realizada con éxito!</h4>
+        <ul class="list-group mb-3">
+            <li class="list-group-item">
+                <strong>Número de operación:</strong> {{ transaccion.id }}
+            </li>
+            <li class="list-group-item">
+                <strong>Monto transferido:</strong> S/. {{ monto }}
+            </li>
+            <li class="list-group-item">
+                <strong>Cuenta origen:</strong> {{ cuenta_origen.numero_cuenta }}
+            </li>
+            <li class="list-group-item">
+                <strong>Cuenta destino:</strong> {{ cuenta_destino.numero_cuenta }}
+            </li>
+            <li class="list-group-item">
+                <strong>Titular destino:</strong> {{ titular_destino }}
+            </li>
+            {% if descripcion %}
+            <li class="list-group-item">
+                <strong>Descripción:</strong> {{ descripcion }}
+            </li>
+            {% endif %}
+            <li class="list-group-item">
+                <strong>Fecha y hora:</strong> {{ transaccion.fecha|date:"d/m/Y H:i:s" }}
+            </li>
+        </ul>
+    </div>
+    <a href="{% url 'detalle_cuenta' cuenta_origen.id %}" class="btn btn-primary">Volver a los detalles de la cuenta</a>
+</div>
+{% endblock %}

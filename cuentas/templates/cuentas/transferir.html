@@ -1,0 +1,21 @@
+{% extends "usuarios/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Transferencia desde la cuenta {{ cuenta.numero_cuenta }}</h3>
+    <p><strong>Saldo disponible:</strong> {{ cuenta.saldo }}</p>
+    <form method="post" class="mb-3">
+        {% csrf_token %}
+        {{ transferencia_form.as_p }}
+        <button type="submit" class="btn btn-warning">Transferir</button>
+        <a href="{% url 'detalle_cuenta' cuenta.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+    {% if messages %}
+        <ul class="mt-3">
+            {% for message in messages %}
+                <li class="alert alert-{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
