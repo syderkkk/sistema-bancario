@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile
-from cuentas.services import generar_numero_cuenta
+
+from .models import Profile, SolicitudPrestamo
 
 class RegistroUsuarioForm(UserCreationForm):
     first_name = forms.CharField(label='Nombre', max_length=150, required=True)
@@ -31,12 +31,9 @@ class RegistroUsuarioForm(UserCreationForm):
             profile.fecha_nacimiento = self.cleaned_data['fecha_nacimiento']
             profile.direccion = self.cleaned_data['direccion']
             profile.telefono = self.cleaned_data['telefono']
-            #profile.numero_cuenta = generar_numero_cuenta()
             profile.save()
         return user
 
-
-from .models import Profile
 class EditarPerfilForm(forms.ModelForm):
     first_name = forms.CharField(label='Nombre', max_length=150, required=True)
     last_name = forms.CharField(label='Apellido', max_length=150, required=True)
@@ -64,3 +61,11 @@ class EditarPerfilForm(forms.ModelForm):
             user.save()
             profile.save()
         return profile
+
+class SolicitudPrestamoForm(forms.ModelForm):
+    class Meta:
+        model = SolicitudPrestamo
+        fields = ['monto', 'plazo_meses', 'motivo']
+        widgets = {
+            'motivo': forms.Textarea(attrs={'rows': 3}),
+        }

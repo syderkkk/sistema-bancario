@@ -1,0 +1,93 @@
+{% extends "usuarios/base.html" %}
+{% block title %}Gestionar Solicitudes de Préstamo{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Solicitudes de Préstamo Pendientes</h3>
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Cuenta</th>
+                <th>Monto</th>
+                <th>Plazo (meses)</th>
+                <th>Tasa (%)</th>
+                <th>Motivo</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in pendientes %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.usuario.username }}</td>
+                <td>{{ s.cuenta.numero_cuenta }}</td>
+                <td>S/. {{ s.monto }}</td>
+                <td>{{ s.plazo_meses }}</td>
+                <td>{{ s.tasa_interes }}</td>
+                <td>{{ s.motivo|default:"-" }}</td>
+                <td>{{ s.fecha_solicitud|date:"d/m/Y H:i" }}</td>
+                <td>
+                    {% if s == primera_pendiente %}
+                    <form method="post" action="{% url 'cambiar_estado_solicitud' s.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button name="accion" value="aceptar" class="btn btn-success btn-sm">Aceptar</button>
+                        <button name="accion" value="rechazar" class="btn btn-danger btn-sm">Rechazar</button>
+                    </form>
+                    {% else %}
+                    <span class="text-muted">En espera</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" class="text-center">No hay solicitudes pendientes.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 class="mt-5">Solicitudes Aceptadas y Rechazadas</h3>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Cuenta</th>
+                <th>Monto</th>
+                <th>Plazo (meses)</th>
+                <th>Tasa (%)</th>
+                <th>Motivo</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in gestionadas %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.usuario.username }}</td>
+                <td>{{ s.cuenta.numero_cuenta }}</td>
+                <td>S/. {{ s.monto }}</td>
+                <td>{{ s.plazo_meses }}</td>
+                <td>{{ s.tasa_interes }}</td>
+                <td>{{ s.motivo|default:"-" }}</td>
+                <td>
+                    {% if s.estado == "aceptada" %}
+                    <span class="badge bg-success">Aceptada</span>
+                    {% else %}
+                    <span class="badge bg-danger">Rechazada</span>
+                    {% endif %}
+                </td>
+                <td>{{ s.fecha_solicitud|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" class="text-center">No hay solicitudes aceptadas ni rechazadas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

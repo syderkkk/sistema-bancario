@@ -1,0 +1,11 @@
+{% extends "usuarios/base.html" %}
+{% block title %}Solicitud enviada{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success">
+        <h4>¡Solicitud enviada!</h4>
+        <p>Tu solicitud de préstamo ha sido registrada y será revisada por un administrador.</p>
+    </div>
+    <a href="{% url 'home' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+{% endblock %}

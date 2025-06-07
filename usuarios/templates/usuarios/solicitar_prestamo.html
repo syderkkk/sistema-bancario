@@ -1,0 +1,14 @@
+{% extends "usuarios/base.html" %}
+{% block title %}Solicitar Préstamo{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Solicitar Préstamo</h3>
+    <p>La tasa de interés anual es <strong>{{ tasa_interes }}%</strong>.</p>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

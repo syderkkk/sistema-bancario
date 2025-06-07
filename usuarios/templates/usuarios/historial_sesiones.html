@@ -1,0 +1,53 @@
+{% extends "usuarios/base.html" %}
+{% block title %}Historial de inicio de sesión{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Historial de inicio de sesión</h3>
+    <form method="get" class="mb-4">
+        <div class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label for="usuario_id" class="form-label mb-0">Selecciona un usuario:</label>
+            </div>
+            <div class="col-auto">
+                <select name="usuario_id" id="usuario_id" class="form-select" required>
+                    <option value="">-- Elegir usuario --</option>
+                    {% for u in usuarios %}
+                        <option value="{{ u.id }}" {% if usuario_seleccionado and usuario_seleccionado.id == u.id %}selected{% endif %}>
+                            {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Ver historial</button>
+            </div>
+        </div>
+    </form>
+    {% if usuario_seleccionado %}
+    <h5>Últimos inicios de sesión de <span class="text-primary">{{ usuario_seleccionado.username }}</span></h5>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Fecha y hora</th>
+                <th>Dirección IP</th>
+                <th>Dispositivo/Navegador</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sesion in sesiones %}
+            <tr>
+                <td>{{ sesion.fecha|date:"d/m/Y H:i:s" }}</td>
+                <td>{{ sesion.ip|default:"-" }}</td>
+                <td>{{ sesion.user_agent|truncatechars:40 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No hay registros de inicio de sesión.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    <a href="{% url 'home' %}" class="btn btn-secondary mt-3">Volver al inicio</a>
+</div>
+{% endblock %}

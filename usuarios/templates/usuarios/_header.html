@@ -15,6 +15,20 @@
                     <li class="nav-item">
                         <a href="{% url 'editar_perfil' %}" class="nav-link">Mi perfil</a>
                     </li>
+                    {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a href="{% url 'gestionar_solicitudes_prestamo' %}"
+                            class="nav-link btn btn-warning text-white fw-bold px-3 rounded-3 ms-2">
+                            Revisar solicitudes de préstamo
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'historial_sesiones' %}"
+                            class="nav-link btn btn-info text-white fw-bold px-3 rounded-3 ms-2">
+                            Historial de sesiones
+                        </a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <span class="nav-link disabled">Hola, {{ user.first_name }}</span>
                     </li>

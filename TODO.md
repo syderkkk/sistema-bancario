@@ -10,9 +10,9 @@
 - [✅ ] Managers/servicios para lógica de negocio
 
 ## 🔐 3. Autenticación y Seguridad
-- [ ] Registro, login, logout
-- [ ] Permisos personalizados y protección de vistas
-- [ ] Validaciones exhaustivas en formularios y modelos
+- [✅] Registro, login, logout
+- [✅] Permisos personalizados y protección de vistas
+- [] Validaciones exhaustivas en formularios y modelos
 
 ## 💳 4. Funcionalidades Bancarias
 - [ ] Vistas CBV para operaciones bancarias
@@ -20,14 +20,14 @@
 - [ ] Pruebas unitarias y de integración
 
 ## 🖼️ 5. Frontend y Navegación
-- [ ] Plantillas base y componentes reutilizables
-- [ ] Sistema de mensajes y feedback al usuario
+- [✅] Plantillas base y componentes reutilizables
+- [✅] Sistema de mensajes y feedback al usuario
 
 ## 🧪 6. Pruebas
 - [ ] Pruebas con pytest y cobertura de casos críticos
 
 ## 🚀 7. Despliegue
-- [ ] Uso de variables de entorno y settings seguros
+- [✅] Uso de variables de entorno y settings seguros
 - [ ] Despliegue automatizado y documentación de entorno
 
 ## 📝 8. Documentación

@@ -1,88 +1,77 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from cuentas.models import CuentaBancaria
-from cuentas.services import crear_tarjeta_para_cuenta
-
-from .forms import TransferenciaForm
-from django.contrib import messages
-
-from cuentas.models import TarjetaBancaria
-from transacciones.models import Transaccion
-
-
-
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from cuentas.models import CuentaBancaria
-from cuentas.services import crear_tarjeta_para_cuenta
-from .forms import TransferenciaForm
 from django.contrib import messages
-from transacciones.models import Transaccion
 from django.db import models
+from django.db.models import Q
 
+from cuentas.models import CuentaBancaria, TarjetaBancaria
+from cuentas.services import crear_tarjeta_para_cuenta, depositar_fondos, retirar_fondos
+from transacciones.models import Transaccion
+from .forms import TransferenciaForm, CajeroForm
+
+from utils.lista_enlazada import HistorialTransacciones
+from utils.filtros_transacciones import filtrar_y_ordenar_transacciones
+from .services import transferir_fondos
 
 @login_required
 def detalle_cuenta(request, cuenta_id):
     cuenta = get_object_or_404(CuentaBancaria, id=cuenta_id, usuario=request.user)
     transferencia_form = TransferenciaForm()
-    # Obtener historial de transacciones (ingresos y salidas)
-    transacciones = Transaccion.objects.filter(
+    transacciones_qs = Transaccion.objects.filter(
         models.Q(cuenta_origen=cuenta) | models.Q(cuenta_destino=cuenta)
-    ).order_by('-fecha')
+    ).order_by('fecha')
+
+    historial = HistorialTransacciones(limite=5)
+    
+    for t in transacciones_qs:
+        historial.agregar(t)
     if request.method == "POST":
-        if "generar_tarjeta" in request.POST:
-            if not cuenta.tarjeta.exists():
-                crear_tarjeta_para_cuenta(cuenta)
-            tarjeta = cuenta.tarjeta.first()
-            if tarjeta:
-                return redirect('detalle_tarjeta', tarjeta_id=tarjeta.id)
+        if "generar_tarjeta" in request.POST and not cuenta.tarjeta.exists():
+            crear_tarjeta_para_cuenta(cuenta)
+        tarjeta = cuenta.tarjeta.first()
+        if tarjeta:
+            return redirect('detalle_tarjeta', tarjeta_id=tarjeta.id)
     return render(request, 'cuentas/detalle_cuenta.html', {
         'cuenta': cuenta,
         'transferencia_form': transferencia_form,
-        'transacciones': transacciones
+        'transacciones': historial.iterar_recientes()
     })
 
 
 @login_required
 def transferir(request, cuenta_id):
     cuenta = get_object_or_404(CuentaBancaria, id=cuenta_id, usuario=request.user)
-    transferencia_form = TransferenciaForm()
     if request.method == "POST":
-        transferencia_form = TransferenciaForm(request.POST)
-        if transferencia_form.is_valid():
-            numero_destino = transferencia_form.cleaned_data["numero_cuenta_destino"]
-            monto = transferencia_form.cleaned_data["monto"]
-            descripcion = transferencia_form.cleaned_data["descripcion"]
+        form = TransferenciaForm(request.POST)
+        if form.is_valid():
+            numero_cuenta_destino = form.cleaned_data["numero_cuenta_destino"]
+            monto = form.cleaned_data["monto"]
+            descripcion = form.cleaned_data["descripcion"]
             try:
-                from cuentas.services import transferir_fondos
-                cuenta_destino = CuentaBancaria.objects.get(numero_cuenta=numero_destino)
-                if cuenta_destino.id == cuenta.id:
-                    messages.error(request, "No puedes transferir a la misma cuenta.")
-                else:
-                    transaccion = transferir_fondos(cuenta, cuenta_destino, monto, descripcion)
-                    titular_destino = f"{cuenta_destino.usuario.first_name} {cuenta_destino.usuario.last_name}"
-                    return render(request, 'cuentas/transferencia_exitosa.html', {
-                        'cuenta_origen': cuenta,
-                        'cuenta_destino': cuenta_destino,
-                        'monto': monto,
-                        'descripcion': descripcion,
-                        'titular_destino': titular_destino,
-                        'transaccion': transaccion
-                    })
+                cuenta_destino = CuentaBancaria.objects.get(numero_cuenta=numero_cuenta_destino)
+                transaccion = transferir_fondos(
+                    cuenta, cuenta_destino, monto, descripcion
+                )
+                titular_destino = f"{cuenta_destino.usuario.first_name} {cuenta_destino.usuario.last_name}"
+                return render(request, "cuentas/transferencia_exitosa.html", {
+                    "cuenta_origen": cuenta,
+                    "cuenta_destino": cuenta_destino,
+                    "monto": monto,
+                    "descripcion": descripcion,
+                    "titular_destino": titular_destino,
+                    "transaccion": transaccion
+                })
             except CuentaBancaria.DoesNotExist:
                 messages.error(request, "La cuenta destino no existe.")
             except ValueError as e:
                 messages.error(request, str(e))
-    return render(request, 'cuentas/transferir.html', {
-        'cuenta': cuenta,
-        'transferencia_form': transferencia_form
+    else:
+        form = TransferenciaForm()
+    return render(request, "cuentas/transferir.html", {
+        "cuenta": cuenta,
+        "transferencia_form": form
     })
 
-
-from .forms import CajeroForm
-from cuentas.services import depositar_fondos, retirar_fondos
 
 def cajero(request):
     deposito_form = CajeroForm(prefix="deposito")
@@ -140,7 +129,6 @@ def detalle_tarjeta(request, tarjeta_id):
 @login_required
 def eliminar_tarjeta(request, tarjeta_id):
     tarjeta = get_object_or_404(TarjetaBancaria, id=tarjeta_id)
-    # Verifica que la tarjeta pertenezca a una cuenta del usuario autenticado
     if tarjeta.cuenta.usuario != request.user:
         return redirect('home')
     cuenta_id = tarjeta.cuenta.id
@@ -156,3 +144,28 @@ def eliminar_cuenta(request, cuenta_id):
         cuenta.delete()
         return redirect('home')
     return redirect('detalle_cuenta', cuenta_id=cuenta_id)
+
+@login_required
+def movimientos_cuenta(request, cuenta_id):
+    cuenta = get_object_or_404(CuentaBancaria, id=cuenta_id, usuario=request.user)
+    filtros = {
+        'tipo': request.GET.get('tipo') or '',
+        'fecha_inicio': request.GET.get('fecha_inicio') or '',
+        'fecha_fin': request.GET.get('fecha_fin') or '',
+        'orden': request.GET.get('orden', 'fecha_desc'),
+        'monto_min': request.GET.get('monto_min') or '',
+        'monto_max': request.GET.get('monto_max') or '',
+        'descripcion': request.GET.get('descripcion') or '',
+    }
+
+    transacciones_qs = Transaccion.objects.filter(
+        Q(cuenta_origen=cuenta) | Q(cuenta_destino=cuenta)
+    )
+
+    transacciones = filtrar_y_ordenar_transacciones(transacciones_qs, filtros)
+
+    return render(request, 'cuentas/movimientos_cuenta.html', {
+        'cuenta': cuenta,
+        'transacciones': transacciones,
+        **filtros,
+    })
