@@ -86,7 +86,9 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {% if t.cuenta_origen == cuenta %}
+                                        {% if t.tipo == "DEPOSITO" %}
+                                        <span class="text-success">+ S/. {{ t.monto }}</span>
+                                        {% elif t.cuenta_origen == cuenta %}
                                         <span class="text-danger">- S/. {{ t.monto }}</span>
                                         {% else %}
                                         <span class="text-success">+ S/. {{ t.monto }}</span>

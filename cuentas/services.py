@@ -38,8 +38,7 @@ def depositar_fondos(cuenta, monto, descripcion=""):
 # Función para retirar fondos de una cuenta bancaria
 def retirar_fondos(cuenta, monto, descripcion=""):
     with transaction.atomic():
-        if cuenta.saldo < monto:
-            raise ValueError("Saldo insuficiente")
+        if cuenta.saldo < monto: raise ValueError("Saldo insuficiente")
         cuenta.saldo -= monto
         cuenta.save()
     Transaccion.objects.create(
@@ -48,7 +47,6 @@ def retirar_fondos(cuenta, monto, descripcion=""):
         monto=monto,
         descripcion=descripcion
     )
-
 
 def transferir_fondos(cuenta_origen, cuenta_destino, monto, descripcion=""):
     with transaction.atomic():
@@ -72,17 +70,17 @@ def generar_numero_tarjeta():
         if not TarjetaBancaria.objects.filter(numero_tarjeta=numero).exists():
             return numero
         
-# Función para generar un código CCV de 3 digitos.
-def generar_ccv(): return str(random.randint(100, 999))
+# Función para generar un código CVV de 3 digitos
+def generar_cvv(): return str(random.randint(100, 999))
 
 def crear_tarjeta_para_cuenta(cuenta):
     numero_tarjeta = generar_numero_tarjeta()
-    ccv = generar_ccv()
+    cvv = generar_cvv()
     fecha_vencimiento = date.today() + timedelta(days=365*4)  # 4 años
     tarjeta = TarjetaBancaria.objects.create(
         cuenta=cuenta,
         numero_tarjeta=numero_tarjeta,
         fecha_vencimiento=fecha_vencimiento,
-        ccv=ccv
+        cvv=cvv
     )
     return tarjeta

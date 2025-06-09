@@ -17,7 +17,7 @@ class TarjetaBancaria(models.Model):
     cuenta = models.ForeignKey(CuentaBancaria, on_delete=models.CASCADE, related_name='tarjeta')
     numero_tarjeta = models.CharField(max_length=16, unique=True)
     fecha_vencimiento = models.DateField()
-    ccv = models.CharField(max_length=3)
+    cvv = models.CharField(max_length=3)
     creada = models.DateTimeField(auto_now_add=True)
     
     def __str__(self): return f"Tarjeta {self.numero_tarjeta} - Cuenta: {self.cuenta.numero_cuenta}"

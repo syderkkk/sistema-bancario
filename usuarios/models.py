@@ -16,8 +16,7 @@ class Profile(models.Model):
 
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+    if created: Profile.objects.create(user=instance)
 
 class SolicitudPrestamo(models.Model):
     ESTADO_CHOICES = [
