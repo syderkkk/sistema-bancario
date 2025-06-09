@@ -1,0 +1,12 @@
+{% extends "usuarios/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Crear nueva cuenta bancaria</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Crear cuenta</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

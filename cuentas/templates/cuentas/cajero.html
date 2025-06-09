@@ -9,24 +9,24 @@
         </div>
     </div>
     {% if error %}
-        <div class="row justify-content-center mb-3">
-            <div class="col-md-8">
-                <div class="alert alert-danger text-center">{{ error }}</div>
-            </div>
+    <div class="row justify-content-center mb-3">
+        <div class="col-md-8">
+            <div class="alert alert-danger text-center">{{ error }}</div>
         </div>
+    </div>
     {% endif %}
     {% if resultado %}
-        <div class="row justify-content-center mb-3">
-            <div class="col-md-8">
-                <div class="alert alert-success text-center">
-                    <h4>¡{{ resultado.tipo|capfirst }} realizado con éxito!</h4>
-                    <p>Monto: <strong>S/. {{ resultado.monto }}</strong></p>
-                    <p>Número de cuenta: <strong>{{ resultado.cuenta.numero_cuenta }}</strong></p>
-                    <p>Titular: <strong>{{ resultado.cuenta.usuario.first_name }} {{ resultado.cuenta.usuario.last_name }}</strong></p>
-                    <p>Saldo actual: <strong>S/. {{ resultado.cuenta.saldo }}</strong></p>
-                </div>
+    <div class="row justify-content-center mb-3">
+        <div class="col-md-8">
+            <div class="alert alert-success text-center">
+                <h4>¡{{ resultado.tipo|capfirst }} realizado con éxito!</h4>
+                <p>Monto: <strong>S/. {{ resultado.monto }}</strong></p>
+                <p>Número de cuenta: <strong>{{ resultado.cuenta.numero_cuenta }}</strong></p>
+                <p>Titular: <strong>{{ resultado.cuenta.usuario.first_name }} {{ resultado.cuenta.usuario.last_name }}</strong></p>
+                <p>Saldo actual: <strong>S/. {{ resultado.cuenta.saldo }}</strong></p>
             </div>
         </div>
+    </div>
     {% endif %}
     <div class="row justify-content-center">
         <div class="col-md-5 mb-4">
@@ -35,7 +35,14 @@
                     <h5 class="card-title text-center mb-3">Depósito</h5>
                     <form method="post">
                         {% csrf_token %}
-                        {{ deposito_form.as_p }}
+                        <div class="mb-3">
+                            {{ deposito_form.numero_cuenta.label_tag }}
+                            {{ deposito_form.numero_cuenta }}
+                        </div>
+                        <div class="mb-3">
+                            {{ deposito_form.monto.label_tag }}
+                            {{ deposito_form.monto }}
+                        </div>
                         <div class="d-grid">
                             <button type="submit" name="depositar" class="btn btn-success">Depositar</button>
                         </div>
@@ -49,7 +56,18 @@
                     <h5 class="card-title text-center mb-3">Retiro</h5>
                     <form method="post">
                         {% csrf_token %}
-                        {{ retiro_form.as_p }}
+                        <div class="mb-3">
+                            {{ retiro_form.numero_cuenta.label_tag }}
+                            {{ retiro_form.numero_cuenta }}
+                        </div>
+                        <div class="mb-3">
+                            {{ retiro_form.monto.label_tag }}
+                            {{ retiro_form.monto }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_clave" class="form-label">Clave secreta</label>
+                            <input type="password" name="clave" id="id_clave" class="form-control" required minlength="4" maxlength="32">
+                        </div>
                         <div class="d-grid">
                             <button type="submit" name="retirar" class="btn btn-danger">Retirar</button>
                         </div>

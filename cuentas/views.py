@@ -7,11 +7,11 @@ from django.db.models import Q
 from cuentas.models import CuentaBancaria, TarjetaBancaria
 from cuentas.services import crear_tarjeta_para_cuenta, depositar_fondos, retirar_fondos
 from transacciones.models import Transaccion
-from .forms import TransferenciaForm, CajeroForm
+from .forms import TransferenciaForm, CajeroForm, ClaveSecretaForm
 
 from utils.lista_enlazada import HistorialTransacciones
 from utils.filtros_transacciones import filtrar_y_ordenar_transacciones
-from .services import transferir_fondos
+from .services import transferir_fondos, crear_cuenta
 
 @login_required
 def detalle_cuenta(request, cuenta_id):
@@ -97,13 +97,17 @@ def cajero(request):
                     error = "La cuenta no existe."
         elif "retirar" in request.POST:
             retiro_form = CajeroForm(request.POST, prefix="retiro")
+            clave = request.POST.get("clave")
             if retiro_form.is_valid():
                 numero_cuenta = retiro_form.cleaned_data["numero_cuenta"]
                 monto = retiro_form.cleaned_data["monto"]
                 try:
                     cuenta = CuentaBancaria.objects.get(numero_cuenta=numero_cuenta)
-                    retirar_fondos(cuenta, monto, descripcion="Retiro en cajero físico simulado")
-                    resultado = {
+                    if not cuenta.verificar_clave(clave):
+                        error = "Clave secreta incorrecta."
+                    else:
+                        retirar_fondos(cuenta, monto, descripcion="Retiro en cajero físico simulado")
+                        resultado = {
                         "tipo": "retiro",
                         "cuenta": cuenta,
                         "monto": monto
@@ -169,3 +173,16 @@ def movimientos_cuenta(request, cuenta_id):
         'transacciones': transacciones,
         **filtros,
     })
+
+@login_required
+def crear_cuenta_con_clave(request):
+    if request.method == "POST":
+        form = ClaveSecretaForm(request.POST)
+        if form.is_valid():
+            cuenta = crear_cuenta(request.user, numero_cuenta=None)
+            cuenta.set_clave_secreta(form.cleaned_data['clave'])
+            cuenta.save()
+            return redirect('detalle_cuenta', cuenta_id=cuenta.id)
+    else:
+        form = ClaveSecretaForm()
+    return render(request, 'cuentas/crear_cuenta_con_clave.html', {'form': form})

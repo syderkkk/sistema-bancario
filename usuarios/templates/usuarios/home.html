@@ -10,35 +10,37 @@
     </div>
     <div class="row mb-4 justify-content-center">
         <div class="col-auto">
-            <form method="post">
-                {% csrf_token %}
-                <button type="submit" name="crear_cuenta" class="btn btn-success btn-lg shadow">
-                    <i class="bi bi-plus-circle"></i> Obtener nueva cuenta bancaria
-                </button>
-            </form>
+            <a href="{% url 'crear_cuenta_con_clave' %}" class="btn btn-success btn-lg shadow">
+                <i class="bi bi-plus-circle"></i> Obtener nueva cuenta bancaria
+            </a>
         </div>
     </div>
     <div class="row">
         <h4 class="mb-3">Tus cuentas bancarias:</h4>
         {% if cuentas %}
-            {% for cuenta in cuentas %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h5 class="card-title mb-2">Cuenta N° {{ cuenta.numero_cuenta }}</h5>
-                        <p class="card-text mb-1"><strong>Saldo:</strong> <span class="text-success">S/. {{ cuenta.saldo }}</span></p>
-                        <p class="card-text mb-1"><strong>Fecha de creación:</strong> {{ cuenta.fecha_creacion|date:"d/m/Y H:i" }}</p>
-                        <a href="{% url 'detalle_cuenta' cuenta.id %}" class="btn btn-primary mt-2 w-100">Ver detalles</a>
-                    </div>
+        {% for cuenta in cuentas %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-2">Cuenta N° {{ cuenta.numero_cuenta }}</h5>
+                    <p class="card-text mb-1"><strong>Saldo:</strong>
+                    <h5 class="text-success">S/. {{ cuenta.saldo }}</h5>
+                    </p>
+                    <p class="card-text mb-1">
+                        <strong>Fecha de creación:</strong>
+                        {{ cuenta.fecha_creacion|date:"d/m/Y H:i" }}
+                    </p>
+                    <a href="{% url 'detalle_cuenta' cuenta.id %}" class="btn btn-primary mt-2 w-100">Ver detalles</a>
                 </div>
             </div>
-            {% endfor %}
+        </div>
+        {% endfor %}
         {% else %}
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    No tienes cuentas bancarias. ¡Crea una para comenzar!
-                </div>
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                No tienes cuentas bancarias. ¡Crea una para comenzar!
             </div>
+        </div>
         {% endif %}
     </div>
 </div>
