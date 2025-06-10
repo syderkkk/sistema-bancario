@@ -13,15 +13,16 @@ def filtrar_y_ordenar_transacciones(transacciones_qs, filtros):
     monto_max = filtros.get('monto_max', '')
     descripcion = filtros.get('descripcion', '')
 
-    # Árbol para ordenamiento
-    arbol = ArbolTransacciones()
+    
     if orden in ['monto_asc', 'monto_desc']:
-        clave_func = lambda t: t.monto
+        clave_func = lambda t: float(t.monto)
     else:
         clave_func = lambda t: t.fecha
 
+    # Árbol para ordenamiento
+    arbol = ArbolTransacciones(clave_func)
     for t in transacciones_qs:
-        arbol.insertar(t, clave_func)
+        arbol.insertar(t)
 
     if orden in ['fecha_asc', 'monto_asc']:
         transacciones = arbol.inorden()

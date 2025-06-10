@@ -9,12 +9,12 @@ class ColaSolicitudes:
         self.final = None
 
     def encolar(self, solicitud):
-        nuevo = NodoCola(solicitud)
+        aux = NodoCola(solicitud)
         if not self.frente:
-            self.frente = self.final = nuevo
+            self.frente = self.final = aux
         else:
-            self.final.siguiente = nuevo
-            self.final = nuevo
+            self.final.siguiente = aux
+            self.final = aux
 
     def desencolar(self):
         if not self.frente:

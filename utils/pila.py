@@ -4,28 +4,31 @@ class NodoPila:
         self.siguiente = None
 
 class Pila:
-    def __init__(self):
-        self.cima = None
+    def __init__(self, L=10):
+        self.elemento = None
+        self.tope = 0
+        self.L = L
+
+    def es_vacia(self): return self.tope == 0
+
+    def es_llena(self): return self.tope == self.L
 
     def apilar(self, dato):
-        nuevo = NodoPila(dato)
-        nuevo.siguiente = self.cima
-        self.cima = nuevo
-
+        if self.es_llena(): return None
+        aux = NodoPila(dato)
+        aux.siguiente = self.elemento
+        self.elemento = aux
+        self.tope += 1
+    
     def desapilar(self):
-        if self.cima is None:
-            return None
-        dato = self.cima.dato
-        self.cima = self.cima.siguiente
+        if self.es_vacia(): return None
+        dato = self.elemento.dato
+        self.elemento = self.elemento.siguiente
+        self.tope -= 1
         return dato
 
-    def esta_vacia(self):
-        return self.cima is None
-
     def recorrer(self):
-        actual = self.cima
-        elementos = []
-        while actual:
-            elementos.append(actual.dato)
-            actual = actual.siguiente
-        return elementos
+        x = self.elemento
+        while x:
+            yield x.dato
+            x = x.siguiente

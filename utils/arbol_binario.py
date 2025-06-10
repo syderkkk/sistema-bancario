@@ -1,42 +1,39 @@
+
 class NodoArbol:
-    def __init__(self, transaccion, clave):
-        self.clave = clave
-        self.transacciones = [transaccion]
-        self.izquierda = None
-        self.derecha = None
+    def __init__(self, transaccion):
+        self.transaccion = transaccion
+        self.izquierda = self.derecha = None
 
 class ArbolTransacciones:
-    def __init__(self):
+    def __init__(self, clave):
         self.raiz = None
+        self.clave = clave
 
-    def insertar(self, transaccion, clave_func):
-        clave_nueva = clave_func(transaccion)
-        def _insertar(nodo):
-            if not nodo:
-                return NodoArbol(transaccion, clave_nueva)
-            if clave_nueva < nodo.clave:
-                nodo.izquierda = _insertar(nodo.izquierda)
-            elif clave_nueva > nodo.clave:
-                nodo.derecha = _insertar(nodo.derecha)
-            else:
-                nodo.transacciones.append(transaccion)
-            return nodo
-        self.raiz = _insertar(self.raiz)
+    def insertar(self, transaccion):
+        if self.raiz == None: self.raiz = NodoArbol(transaccion)
+        else: self._insertarR(self.raiz, transaccion)
 
-    def inorden(self):
-        def _inorden(nodo):
-            if nodo:
-                yield from _inorden(nodo.izquierda)
-                for t in nodo.transacciones:
-                    yield t
-                yield from _inorden(nodo.derecha)
-        return list(_inorden(self.raiz))
+    def _insertarR(self, raiz_actual, transaccion):
+        if self.clave(transaccion) < self.clave(raiz_actual.transaccion):
+            if raiz_actual.izquierda == None: raiz_actual.izquierda = NodoArbol(transaccion)
+            else: self._insertarR(raiz_actual.izquierda, transaccion)
+        else:
+            if raiz_actual.derecha == None: raiz_actual.derecha = NodoArbol(transaccion)
+            else: self._insertarR(raiz_actual.derecha, transaccion)
 
+    def inOrden(self):
+        return self._inOrdenR(self.raiz)
+
+    def _inOrdenR(self, raiz_actual):
+        if raiz_actual == None:
+            return []
+        return self._inordenR(raiz_actual.izquierda) + [raiz_actual.transaccion] + self._inordenR(raiz_actual.derecha)
+    
     def inorden_reverso(self):
-        def _inorden_rev(nodo):
-            if nodo:
-                yield from _inorden_rev(nodo.derecha)
-                for t in nodo.transacciones:
-                    yield t
-                yield from _inorden_rev(nodo.izquierda)
-        return list(_inorden_rev(self.raiz))
+        return self._inorden_reversoR(self.raiz)
+    
+    def _inorden_reversoR(self, raiz_actual):
+        if raiz_actual == None:
+            return []
+        return self._inorden_reversoR(raiz_actual.derecha) + [raiz_actual.transaccion] + self._inorden_reversoR(raiz_actual.izquierda)
+

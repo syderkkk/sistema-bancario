@@ -1,48 +1,47 @@
 class NodoCircular:
     def __init__(self, imagen):
         self.imagen = imagen
-        self.siguiente = None
-        self.anterior = None
+        self.siguiente = self.anterior = None
 
 class ListaCircular:
     def __init__(self):
         self.inicio = None
 
     def agregar(self, imagen):
-        nuevo = NodoCircular(imagen)
+        aux = NodoCircular(imagen)
         if not self.inicio:
-            self.inicio = nuevo
-            nuevo.siguiente = nuevo
-            nuevo.anterior = nuevo
+            self.inicio = aux
+            aux.siguiente = aux
+            aux.anterior = aux
         else:
             fin = self.inicio.anterior
-            fin.siguiente = nuevo
-            nuevo.anterior = fin
-            nuevo.siguiente = self.inicio
-            self.inicio.anterior = nuevo
+            fin.siguiente = aux
+            aux.anterior = fin
+            aux.siguiente = self.inicio
+            self.inicio.anterior = aux
 
     def buscar(self, posicion):
-        actual = self.inicio
+        x = self.inicio
         for i in range(posicion):
-            actual = actual.siguiente
-        return actual
+            x = x.siguiente
+        return x
 
     def __iter__(self):
         if not self.inicio:
             return
-        actual = self.inicio
+        x = self.inicio
         while True:
-            yield actual.imagen
-            actual = actual.siguiente
-            if actual == self.inicio:
+            yield x.imagen
+            x = x.siguiente
+            if x == self.inicio:
                 break
 
     def longitud(self):
         if not self.inicio:
             return 0
-        actual = self.inicio
+        x = self.inicio
         count = 1
-        while actual.siguiente != self.inicio:
+        while x.siguiente != self.inicio:
             count += 1
-            actual = actual.siguiente
+            x = x.siguiente
         return count

@@ -21,7 +21,7 @@ def detalle_cuenta(request, cuenta_id):
         models.Q(cuenta_origen=cuenta) | models.Q(cuenta_destino=cuenta)
     ).order_by('fecha')
 
-    historial = HistorialTransacciones(limite=5)
+    historial = HistorialTransacciones(L=5)
     
     for t in transacciones_qs:
         historial.agregar(t)
@@ -182,7 +182,7 @@ def crear_cuenta_con_clave(request):
             cuenta = crear_cuenta(request.user, numero_cuenta=None)
             cuenta.set_clave_secreta(form.cleaned_data['clave'])
             cuenta.save()
-            return redirect('detalle_cuenta', cuenta_id=cuenta.id)
+            return redirect('home')
     else:
         form = ClaveSecretaForm()
     return render(request, 'cuentas/crear_cuenta_con_clave.html', {'form': form})

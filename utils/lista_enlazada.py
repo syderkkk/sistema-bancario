@@ -1,27 +1,25 @@
 class NodoTransaccion:
     def __init__(self, transaccion):
         self.transaccion = transaccion
-        self.siguiente = None
-        self.anterior = None
+        self.siguiente = self.anterior = None
 
 class HistorialTransacciones:
-    def __init__(self, limite=10):
-        self.inicio = None
-        self.final = None
-        self.limite = limite
+    def __init__(self, L=5):
+        self.inicio = self.final = None
+        self.L = L
         self.tamano = 0
 
     def agregar(self, transaccion):
-        nuevo = NodoTransaccion(transaccion)
+        aux = NodoTransaccion(transaccion)
         if not self.inicio:
-            self.inicio = self.final = nuevo
+            self.inicio = self.final = aux
         else:
-            self.final.siguiente = nuevo
-            nuevo.anterior = self.final
-            self.final = nuevo
+            self.final.siguiente = aux
+            aux.anterior = self.final
+            self.final = aux
         self.tamano += 1
         # Mantener el límite de historial
-        while self.tamano > self.limite:
+        while self.tamano > self.L:
             temp = self.inicio
             self.inicio = self.inicio.siguiente
             if self.inicio:
@@ -30,13 +28,13 @@ class HistorialTransacciones:
             self.tamano -= 1
 
     def __iter__(self):
-        actual = self.inicio
-        while actual:
-            yield actual.transaccion
-            actual = actual.siguiente
+        x = self.inicio
+        while x:
+            yield x.transaccion
+            x = x.siguiente
 
     def iterar_recientes(self):
-        actual = self.final
-        while actual:
-            yield actual.transaccion
-            actual = actual.anterior
+        x = self.final
+        while x:
+            yield x.transaccion
+            x = x.anterior
