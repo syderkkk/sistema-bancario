@@ -2,9 +2,29 @@ from utils.arbol_binario import ArbolTransacciones
 from datetime import datetime
 
 def filtrar_y_ordenar_transacciones(transacciones_qs, filtros):
-    """
-    Aplica ordenamiento con árbol binario y luego filtra en memoria según los filtros dados.
-    """
+
+    def filtrar_fecha(transacciones, valor, op):
+        try:
+            fecha_dt = datetime.strptime(valor, "%Y-%m-%d").date()
+            if op == "gte":
+                return [t for t in transacciones if t.fecha.date() >= fecha_dt]
+            elif op == "lte":
+                return [t for t in transacciones if t.fecha.date() <= fecha_dt]
+        except (ValueError, TypeError):
+            return transacciones
+        return transacciones
+
+    def filtrar_monto(transacciones, valor, op):
+        try:
+            monto_f = float(valor)
+            if op == "gte":
+                return [t for t in transacciones if float(t.monto) >= monto_f]
+            elif op == "lte":
+                return [t for t in transacciones if float(t.monto) <= monto_f]
+        except (ValueError, TypeError):
+            return transacciones
+        return transacciones
+
     orden = filtros.get('orden', 'fecha_desc')
     tipo = filtros.get('tipo', '')
     fecha_inicio = filtros.get('fecha_inicio', '')
@@ -13,49 +33,27 @@ def filtrar_y_ordenar_transacciones(transacciones_qs, filtros):
     monto_max = filtros.get('monto_max', '')
     descripcion = filtros.get('descripcion', '')
 
+    clave_func = (lambda t: float(t.monto)) if 'monto' in orden else (lambda t: t.fecha)
     
-    if orden in ['monto_asc', 'monto_desc']:
-        clave_func = lambda t: float(t.monto)
-    else:
-        clave_func = lambda t: t.fecha
+    ascendente = orden.endswith('_asc')
 
-    # Árbol para ordenamiento
     arbol = ArbolTransacciones(clave_func)
     for t in transacciones_qs:
         arbol.insertar(t)
 
-    if orden in ['fecha_asc', 'monto_asc']:
-        transacciones = arbol.inorden()
-    else:
-        transacciones = arbol.inorden_reverso()
+    transacciones = arbol.inOrden() if ascendente else arbol.inorden_reverso()
 
     # Filtros en memoria
     if tipo:
         transacciones = [t for t in transacciones if t.tipo == tipo]
     if fecha_inicio:
-        try:
-            fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
-            transacciones = [t for t in transacciones if t.fecha.date() >= fecha_inicio_dt]
-        except ValueError:
-            pass
+        transacciones = filtrar_fecha(transacciones, fecha_inicio, "gte")
     if fecha_fin:
-        try:
-            fecha_fin_dt = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
-            transacciones = [t for t in transacciones if t.fecha.date() <= fecha_fin_dt]
-        except ValueError:
-            pass
+        transacciones = filtrar_fecha(transacciones, fecha_fin, "lte")
     if monto_min:
-        try:
-            monto_min_f = float(monto_min)
-            transacciones = [t for t in transacciones if float(t.monto) >= monto_min_f]
-        except ValueError:
-            pass
+        transacciones = filtrar_monto(transacciones, monto_min, "gte")
     if monto_max:
-        try:
-            monto_max_f = float(monto_max)
-            transacciones = [t for t in transacciones if float(t.monto) <= monto_max_f]
-        except ValueError:
-            pass
+        transacciones = filtrar_monto(transacciones, monto_max, "lte")
     if descripcion:
         transacciones = [t for t in transacciones if t.descripcion and descripcion.lower() in t.descripcion.lower()]
 

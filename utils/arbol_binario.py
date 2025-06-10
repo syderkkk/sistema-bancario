@@ -27,7 +27,7 @@ class ArbolTransacciones:
     def _inOrdenR(self, raiz_actual):
         if raiz_actual == None:
             return []
-        return self._inordenR(raiz_actual.izquierda) + [raiz_actual.transaccion] + self._inordenR(raiz_actual.derecha)
+        return self._inOrdenR(raiz_actual.izquierda) + [raiz_actual.transaccion] + self._inOrdenR(raiz_actual.derecha)
     
     def inorden_reverso(self):
         return self._inorden_reversoR(self.raiz)
