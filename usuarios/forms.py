@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Profile, SolicitudPrestamo
+from .models import Profile
 
 class RegistroUsuarioForm(UserCreationForm):
     first_name = forms.CharField(label='Nombre', max_length=150, required=True)
@@ -61,11 +61,3 @@ class EditarPerfilForm(forms.ModelForm):
             user.save()
             profile.save()
         return profile
-
-class SolicitudPrestamoForm(forms.ModelForm):
-    class Meta:
-        model = SolicitudPrestamo
-        fields = ['monto', 'plazo_meses', 'motivo']
-        widgets = {
-            'motivo': forms.Textarea(attrs={'rows': 3}),
-        }

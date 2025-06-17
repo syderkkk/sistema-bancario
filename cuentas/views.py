@@ -37,7 +37,6 @@ def detalle_cuenta(request, cuenta_id):
         'transacciones': historial.iterar_recientes()
     })
 
-
 @login_required
 def transferir(request, cuenta_id):
     cuenta = get_object_or_404(CuentaBancaria, id=cuenta_id, usuario=request.user)

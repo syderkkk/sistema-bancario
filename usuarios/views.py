@@ -3,18 +3,14 @@ from django.views.generic import CreateView
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.views.decorators.http import require_POST
-from django.http import HttpResponseForbidden
 
-from .forms import RegistroUsuarioForm, EditarPerfilForm, SolicitudPrestamoForm
-from .models import HistorialInicioSesion, SolicitudPrestamo
-from cuentas.models import CuentaBancaria
+from .forms import RegistroUsuarioForm, EditarPerfilForm
+from auditoria.models import HistorialInicioSesion
 from cuentas.services import crear_cuenta
 from utils.lista_circular import ListaCircular
-from utils.cola import ColaSolicitudes
-from utils.pila import Pila
 from django.contrib import messages
 
 # Vista para el registro de nuevos usuarios
@@ -77,7 +73,6 @@ def landing_page(request):
         'longitud': longitud
     })
 
-
 # Vista para la página de inicio después de iniciar sesión
 @login_required
 def home(request):
@@ -107,82 +102,3 @@ def editar_perfil(request):
     else:
         form = EditarPerfilForm(instance=profile, user=request.user)
     return render(request, 'usuarios/editar_perfil.html', {'form': form})
-
-@login_required
-def solicitar_prestamo(request, cuenta_id):
-    tasa_interes = 10.0  # Puedes parametrizar esto
-    cuenta = CuentaBancaria.objects.get(id=cuenta_id, usuario=request.user)
-    if request.method == 'POST':
-        form = SolicitudPrestamoForm(request.POST)
-        if form.is_valid():
-            solicitud = form.save(commit=False)
-            solicitud.usuario = request.user
-            solicitud.cuenta = cuenta
-            solicitud.tasa_interes = tasa_interes
-            solicitud.save()
-            return render(request, 'usuarios/solicitud_prestamo_enviada.html')
-    else:
-        form = SolicitudPrestamoForm()
-    return render(request, 'usuarios/solicitar_prestamo.html', {
-        'form': form,
-        'tasa_interes': tasa_interes,
-        'cuenta': cuenta,
-    })
-
-@login_required
-def gestionar_solicitudes_prestamo(request):
-    if not request.user.is_superuser:
-        return redirect('home')
-    pendientes_qs = SolicitudPrestamo.objects.filter(estado='pendiente').order_by('fecha_solicitud')
-    cola = ColaSolicitudes()
-    for solicitud in pendientes_qs:
-        cola.encolar(solicitud)
-    primera_pendiente = cola.ver_frente()
-    solicitudes_en_cola = []
-    actual = cola.frente
-    while actual:
-        solicitudes_en_cola.append(actual.solicitud)
-        actual = actual.siguiente
-    gestionadas = SolicitudPrestamo.objects.exclude(estado='pendiente').order_by('-fecha_solicitud')
-    return render(request, 'usuarios/gestionar_solicitudes_prestamo.html', {
-        'pendientes': solicitudes_en_cola,
-        'gestionadas': gestionadas,
-        'primera_pendiente': primera_pendiente,
-    })
-
-@login_required
-def cambiar_estado_solicitud(request, solicitud_id):
-    if not request.user.is_superuser:
-        return redirect('home')
-    solicitud = get_object_or_404(SolicitudPrestamo, id=solicitud_id)
-    accion = request.POST.get('accion')
-    if solicitud.estado == 'pendiente':
-        if accion == 'aceptar':
-            solicitud.estado = 'aceptada'
-            cuenta = solicitud.cuenta
-            cuenta.saldo += solicitud.monto
-            cuenta.save()
-        elif accion == 'rechazar':
-            solicitud.estado = 'rechazada'
-        solicitud.save()
-    return redirect('gestionar_solicitudes_prestamo')
-
-@login_required
-def historial_sesiones(request):
-    if not request.user.is_superuser: return HttpResponseForbidden("No tienes permiso para ver este historial!")
-    usuarios = User.objects.all().order_by('username')
-    usuario_id = request.GET.get('usuario_id')
-    if usuario_id:
-        usuario = User.objects.filter(id=usuario_id).first()
-    else:
-        usuario = None
-    sesiones_qs = usuario.historial_sesiones.all()[:10] if usuario else []
-    pila = Pila()
-    for sesion in sesiones_qs:
-        pila.apilar(sesion)
-    sesiones = pila.recorrer()
-    return render(request, 'usuarios/historial_sesiones.html', {
-        'sesiones': sesiones,
-        'usuarios': usuarios,
-        'usuario_seleccionado': usuario
-    })
