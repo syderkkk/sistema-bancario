@@ -34,7 +34,7 @@ Este proyecto tiene como propósito simular un sistema bancario básico que perm
 ## 🛠️ Tecnologías Utilizadas
 
 - **Lenguaje:** Python 3.x
-- **Framework web:** Django
+- **Framework:** Django
 - **Base de datos:** PostgreSQL 
 - **Estilos:** Bootstrap
 - **Otros:** 
