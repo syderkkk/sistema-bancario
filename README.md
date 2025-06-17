@@ -11,10 +11,6 @@ Sistema web desarrollado con **Django** para la gestión de operaciones bancaria
 - [🛠️ Tecnologías Utilizadas](#️-tecnologías-utilizadas)
 - [⚙️ Instalación y Ejecución](#️-instalación-y-ejecución)
 - [📁 Estructura del Proyecto](#-estructura-del-proyecto)
-- [🧪 Pruebas](#-pruebas)
-- [📌 Futuras Mejoras](#-futuras-mejoras)
-- [🤝 Contribuciones](#-contribuciones)
-- [📄 Licencia](#-licencia)
 
 ---
 
