@@ -1,4 +1,3 @@
-
 class NodoArbol:
     def __init__(self, transaccion):
         self.transaccion = transaccion
@@ -37,3 +36,4 @@ class ArbolTransacciones:
             return []
         return self._inorden_reversoR(raiz_actual.derecha) + [raiz_actual.transaccion] + self._inorden_reversoR(raiz_actual.izquierda)
 
+# Uso: filtros_transacciones.py ✅

@@ -38,3 +38,5 @@ class HistorialTransacciones:
         while x:
             yield x.transaccion
             x = x.anterior
+
+# Uso: cuentas/views.py ✅ Historial de transacciones en detalle de cuenta

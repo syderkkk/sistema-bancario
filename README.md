@@ -98,6 +98,5 @@ sistema-bancario/
 ├── utils/             # Implementaciones de estructuras de datos
 ├── sistema_bancario/  # Configuración global del proyecto Django
 ├── manage.py          # Script de gestión del proyecto
-├── requirements.txt   # Lista de dependencias
-└── TODO.md            # Tareas y pendientes del desarrollo
+└── requirements.txt   # Lista de dependencias
 ```

@@ -32,3 +32,5 @@ class Pila:
         while x:
             yield x.dato
             x = x.siguiente
+
+# Uso: auditoria/views.py ✅ Pila de auditoría para historial de sesiones

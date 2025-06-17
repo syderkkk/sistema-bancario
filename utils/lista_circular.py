@@ -45,3 +45,5 @@ class ListaCircular:
             count += 1
             x = x.siguiente
         return count
+    
+# Uso: usuarios/views.py ✅ Carrusel de imágenes en la landing page
