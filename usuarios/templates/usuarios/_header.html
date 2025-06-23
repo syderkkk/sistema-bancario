@@ -1,49 +1,46 @@
 <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold fs-4" href="{% url 'landing_page' %}">SISTEMA BANCARIO</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
+    <nav class="bg-blue-600 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 relative">
+            <a class="text-white font-bold text-2xl tracking-wide" href="{% url 'landing_page' %}">SISTEMA BANCARIO</a>
+            <!-- Menú de navegación siempre visible y responsivo -->
+            <div class="flex flex-col sm:flex-row w-full sm:w-auto bg-blue-600 sm:bg-transparent z-50 sm:z-auto shadow sm:shadow-none rounded-b-xl sm:rounded-none transition-all duration-300 ml-0 sm:ml-4">
+                <ul class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center p-4 sm:p-0 w-full sm:w-auto">
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="{% url 'home' %}" class="nav-link">Inicio</a>
+                    <li>
+                        <a href="{% url 'home' %}" class="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow">Inicio</a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{% url 'editar_perfil' %}" class="nav-link">Mi perfil</a>
+                    <li>
+                        <a href="{% url 'editar_perfil' %}" class="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow">Mi perfil</a>
                     </li>
                     {% if user.is_superuser %}
-                    <li class="nav-item">
+                    <li>
                         <a href="{% url 'gestionar_solicitudes_prestamo' %}"
-                            class="nav-link btn btn-warning text-white fw-bold px-3 rounded-3 ms-2">
+                            class="px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-bold hover:bg-yellow-500 transition shadow">
                             Revisar solicitudes de préstamo
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li>
                         <a href="{% url 'historial_sesiones' %}"
-                            class="nav-link btn btn-info text-white fw-bold px-3 rounded-3 ms-2">
+                            class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-700 transition shadow">
                             Historial de sesiones
                         </a>
                     </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <span class="nav-link disabled">Hola, {{ user.first_name }}</span>
+                    <li>
+                        <span class="text-gray-200 px-3 py-2">Hola, {{ user.first_name }}</span>
                     </li>
-                    <li class="nav-item">
-                        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    <li>
+                        <form action="{% url 'logout' %}" method="post" class="inline">
                             {% csrf_token %}
-                            <button type="submit" class="nav-link btn btn-link">Cerrar sesión</button>
+                            <button type="submit" class="px-4 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition shadow">Cerrar sesión</button>
                         </form>
                     </li>
                     {% else %}
-                    <li class="nav-item">
-                        <a href="{% url 'registro' %}" class="nav-link">Registrarse</a>
+                    <li>
+                        <a href="{% url 'registro' %}" class="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow">Registrarse</a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{% url 'login' %}" class="nav-link">Iniciar sesión</a>
+                    <li>
+                        <a href="{% url 'login' %}" class="px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-800 font-medium transition shadow">Iniciar sesión</a>
                     </li>
                     {% endif %}
                 </ul>

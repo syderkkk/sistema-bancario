@@ -3,27 +3,43 @@
 {% block title %}Editar Perfil{% endblock %}
 
 {% block content %}
-<div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
-    <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
+<div class="min-h-[80vh] flex items-center justify-center bg-[#F0F4F4] py-4">
+    <div class="w-full max-w-[480px] bg-white/95 rounded-2xl shadow-xl px-4 py-6">
         <div class="text-center mb-4">
-            <h2 class="mt-2 mb-0">Editar Perfil</h2>
-            <p class="text-muted mb-0">Actualiza tus datos personales</p>
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png" alt="Perfil" width="44" height="44"
+                 class="mx-auto mb-2 shadow-lg rounded-full bg-white p-1 border-2 border-blue-100">
+            <h2 class="text-base font-extrabold text-blue-700 mb-1">Editar Perfil</h2>
+            <p class="text-gray-500 text-xs">Actualiza tus datos personales</p>
         </div>
-        <form method="post" novalidate>
+        <form method="post" novalidate class="space-y-3">
             {% csrf_token %}
-            {% for field in form %}
-                <div class="mb-3">
-                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                    {{ field }}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 font-semibold mb-1 text-xs">{{ field.label }}</label>
+                    <input
+                        type="{{ field.field.widget.input_type }}"
+                        name="{{ field.html_name }}"
+                        id="{{ field.id_for_label }}"
+                        {% if field.value %}value="{{ field.value|stringformat:'s' }}"{% endif %}
+                        class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition bg-white shadow-sm hover:shadow-md text-xs"
+                        {% if field.field.required %}required{% endif %}
+                        placeholder="{{ field.label }}"
+                        autocomplete="off"
+                    >
                     {% if field.errors %}
-                        <div class="text-danger small">{{ field.errors|striptags }}</div>
+                        <div class="text-red-600 text-xs mt-1">{{ field.errors|striptags }}</div>
                     {% endif %}
                 </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary w-100">Guardar cambios</button>
+                {% endfor %}
+            </div>
+            <button type="submit"
+                class="w-full mt-3 bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 text-white font-bold py-2 rounded-xl shadow-lg transition text-xs hover:scale-[1.03]">
+                Guardar cambios
+            </button>
         </form>
-        <div class="mt-3 text-center">
-            <a href="{% url 'home' %}">Volver al inicio</a>
+        <div class="mt-4 text-center">
+            <a href="{% url 'home' %}" class="text-blue-600 hover:text-blue-800 hover:underline font-bold transition text-xs">Volver al inicio</a>
         </div>
     </div>
 </div>

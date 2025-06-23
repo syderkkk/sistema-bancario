@@ -4,51 +4,56 @@
 {% block title %}Bienvenido al Sistema Bancario{% endblock %}
 
 {% block content %}
-<div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
-    <div class="text-center w-100">
-        <!-- Icono de perfil con margin-top -->
-        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-             alt="Banco"
-             width="100"
-             class="mb-4"
-             style="margin-top: 40px; box-shadow: 0 4px 16px rgba(0,0,0,0.10); border-radius: 50%; background: #fff; padding: 10px;">
-        <h1 class="fw-bold mb-3">Bienvenido al <span class="text-primary">Sistema Bancario</span></h1>
-
-        <!-- Carrusel personalizado -->
-        <div id="carrusel-personalizado" class="mb-4 d-flex justify-content-center align-items-center" style="position: relative; min-height: 260px;">
-            {% if imagen_actual %}
-                <!-- Botón anterior -->
-                <a href="?pos={{ pos|add:'-1' }}"
-                   class="btn btn-light shadow rounded-circle d-flex align-items-center justify-content-center text-primary"
-                   style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; z-index: 2;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-                    </svg>
+<div class="min-h-[90vh] flex items-center justify-center bg-[#e0e7ff]">
+    <div class="w-full max-w-4xl mx-auto bg-white/95 rounded-3xl shadow-2xl px-0 py-0 overflow-hidden flex flex-col md:flex-row">
+        <!-- Lado izquierdo: branding y bienvenida -->
+        <div class="flex-1 flex flex-col justify-center items-center px-8 py-12 bg-gradient-to-br from-blue-600 to-blue-400 text-white relative">
+            <div class="absolute top-0 left-0 w-full h-full bg-blue-900/10 pointer-events-none"></div>
+            <div class="relative z-10 w-full flex flex-col items-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                    alt="Banco"
+                    width="90"
+                    class="mb-6 mx-auto shadow-lg rounded-full bg-white p-2 border-4 border-blue-200">
+                <h1 class="text-3xl md:text-4xl font-extrabold mb-2 text-white drop-shadow-lg">
+                    ¡Bienvenido!
+                </h1>
+                <h2 class="text-xl md:text-2xl font-semibold mb-4 text-blue-100">Sistema Bancario</h2>
+                <p class="text-blue-50 mb-8 text-base md:text-lg font-light">
+                    Gestiona tus cuentas, realiza transferencias y controla tus finanzas de manera fácil y segura.
+                </p>
+                <a href="{% url 'registro' %}" class="bg-white text-blue-700 hover:bg-blue-50 font-bold px-8 py-3 rounded-xl shadow-lg transition text-lg text-center border-2 border-white hover:border-blue-600 focus:ring-2 focus:ring-blue-400 outline-none">
+                    ¡Empieza ya!
                 </a>
-                <!-- Imagen del carrusel -->
-                <img src="{% static imagen_actual %}"
-                     class="d-block mx-auto"
-                     style="max-width: 400px; width: 100%; border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); border: 4px solid #fff;"
-                     alt="Promoción">
-                <!-- Botón siguiente -->
-                <a href="?pos={{ pos|add:'1' }}"
-                   class="btn btn-light shadow rounded-circle d-flex align-items-center justify-content-center text-primary"
-                   style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; z-index: 2;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-                    </svg>
-                </a>
-            {% else %}
-                <p>No hay imágenes para mostrar.</p>
-            {% endif %}
+            </div>
         </div>
-
-        <p class="lead text-muted mb-4">
-            Gestiona tus cuentas, realiza transferencias y controla tus finanzas de manera fácil y segura.
-        </p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4 shadow">Iniciar sesión</a>
-            <a href="{% url 'registro' %}" class="btn btn-outline-success btn-lg px-4 shadow">Registrarse</a>
+        <!-- Lado derecho: carrusel -->
+        <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 bg-[#F0F4F4] relative">
+            <div class="w-full max-w-xs mx-auto">
+                <div class="relative flex justify-center items-center min-h-[260px]">
+                    {% if imagen_actual %}
+                        <!-- Botón anterior -->
+                        <a href="?pos={{ pos|add:'-1' }}"
+                            class="absolute left-0 top-1/2 -translate-y-1/2 bg-white text-blue-600 hover:bg-blue-100 shadow-lg rounded-full flex items-center justify-center w-12 h-12 z-10 transition border border-blue-200 focus:ring-2 focus:ring-blue-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </a>
+                        <!-- Imagen del carrusel -->
+                        <img src="{% static imagen_actual %}"
+                            class="mx-auto max-w-xs w-full rounded-2xl shadow-2xl border-4 border-white transition duration-300 hover:scale-105"
+                            alt="Promoción">
+                        <!-- Botón siguiente -->
+                        <a href="?pos={{ pos|add:'1' }}"
+                            class="absolute right-0 top-1/2 -translate-y-1/2 bg-white text-blue-600 hover:bg-blue-100 shadow-lg rounded-full flex items-center justify-center w-12 h-12 z-10 transition border border-blue-200 focus:ring-2 focus:ring-blue-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    {% else %}
+                        <p class="text-gray-400">No hay imágenes para mostrar.</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

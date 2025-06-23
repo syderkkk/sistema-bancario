@@ -1,40 +1,37 @@
 {% extends "usuarios/base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <h2 class="fw-bold">¡Bienvenido, {{ user.first_name }} {{ user.last_name }}!</h2>
-            <p class="text-muted">Gestiona tus cuentas bancarias de forma segura y sencilla.</p>
-        </div>
+<div class="max-w-5xl mx-auto px-4 py-8 bg-[#ffff] min-h-[80vh] rounded-2xl shadow-lg">
+    <div class="mb-8 text-center">
+        <h2 class="text-3xl font-bold text-blue-700 mb-2">¡Bienvenido, {{ user.first_name }} {{ user.last_name }}!</h2>
+        <p class="text-gray-600">Gestiona tus cuentas bancarias de forma segura y sencilla.</p>
     </div>
-    <div class="row mb-4 justify-content-center">
-        <div class="col-auto">
-            <a href="{% url 'crear_cuenta_con_clave' %}" class="btn btn-success btn-lg shadow">
-                <i class="bi bi-plus-circle"></i> Obtener nueva cuenta bancaria
-            </a>
-        </div>
+    <div class="flex justify-center mb-8">
+        <a href="{% url 'crear_cuenta_con_clave' %}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition duration-200 hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Obtener nueva cuenta bancaria
+        </a>
     </div>
-    <div class="row">
-        <h4 class="mb-3">Tus cuentas bancarias:</h4>
+    <div>
+        <h4 class="text-xl font-semibold mb-4 text-gray-800">Tus cuentas bancarias:</h4>
         {% if cuentas %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for cuenta in cuentas %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h5 class="card-title mb-2">Cuenta N° {{ cuenta.numero_cuenta }}</h5>
-                        <h6 class="text-success mb-2">Saldo: S/. {{ cuenta.saldo }}</h6>
-                        <p class="mb-1"><strong>Fecha de creación:</strong> {{ cuenta.fecha_creacion|date:"d/m/Y H:i" }}</p>
-                        <a href="{% url 'detalle_cuenta' cuenta.id %}" class="btn btn-primary mt-2 w-100">Ver detalles</a>
-                    </div>
+            <div class="bg-white/90 rounded-2xl shadow-xl p-6 flex flex-col h-full border border-gray-200 hover:shadow-2xl hover:border-blue-200 transition duration-200">
+                <h5 class="text-lg font-bold text-blue-700 mb-1">Cuenta N° {{ cuenta.numero_cuenta }}</h5>
+                <h6 class="text-green-600 font-semibold mb-2">Saldo: S/. {{ cuenta.saldo }}</h6>
+                <p class="text-gray-500 mb-2 text-sm"><span class="font-medium text-gray-700">Fecha de creación:</span> {{ cuenta.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                <div class="mt-auto">
+                    <a href="{% url 'detalle_cuenta' cuenta.id %}" class="block w-full text-center bg-blue-600 hover:bg-blue-800 text-white font-medium py-2 rounded-lg shadow-md transition duration-200 hover:scale-105">Ver detalles</a>
                 </div>
             </div>
             {% endfor %}
+        </div>
         {% else %}
-        <div class="col-12">
-            <div class="alert alert-info text-center">
-                No tienes cuentas bancarias. ¡Crea una para comenzar!
-            </div>
+        <div class="bg-blue-100 border border-blue-200 text-blue-700 rounded-xl p-6 text-center mt-6 shadow">
+            No tienes cuentas bancarias. ¡Crea una para comenzar!
         </div>
         {% endif %}
     </div>
