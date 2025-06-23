@@ -1,88 +1,90 @@
 {% extends "usuarios/base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h3>Movimientos de la cuenta {{ cuenta.numero_cuenta }}</h3>
-    <form method="get" class="row g-2 mb-4">
-        <div class="col-md-2">
-            <select name="tipo" class="form-select">
+<div class="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 py-8">
+    <div class="w-full max-w-5xl bg-white/95 rounded-3xl shadow-2xl px-8 py-8">
+        <h3 class="text-2xl font-extrabold text-blue-700 mb-6 text-center">
+            Movimientos de la cuenta <span class="text-blue-900">{{ cuenta.numero_cuenta }}</span>
+        </h3>
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <select name="tipo" class="col-span-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white shadow-sm text-sm">
                 <option value="">Todos los tipos</option>
                 <option value="DEPOSITO" {% if tipo == "DEPOSITO" %}selected{% endif %}>Depósito</option>
                 <option value="RETIRO" {% if tipo == "RETIRO" %}selected{% endif %}>Retiro</option>
                 <option value="TRANSFERENCIA" {% if tipo == "TRANSFERENCIA" %}selected{% endif %}>Transferencia</option>
             </select>
-        </div>
-        <div class="col-md-2">
-            <input type="date" name="fecha_inicio" class="form-control" value="{{ fecha_inicio }}">
-        </div>
-        <div class="col-md-2">
-            <input type="date" name="fecha_fin" class="form-control" value="{{ fecha_fin }}">
-        </div>
-        <div class="col-md-2">
-            <input type="number" step="0.01" name="monto_min" class="form-control" placeholder="Monto mínimo" value="{{ monto_min }}">
-        </div>
-        <div class="col-md-2">
-            <input type="number" step="0.01" name="monto_max" class="form-control" placeholder="Monto máximo" value="{{ monto_max }}">
-        </div>
-        <div class="col-md-2">
-            <input type="text" name="descripcion" class="form-control" placeholder="Descripción" value="{{ descripcion }}">
-        </div>
-        <div class="col-md-2">
-            <select name="orden" class="form-select">
+            <input type="date" name="fecha_inicio" class="col-span-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white shadow-sm text-sm" value="{{ fecha_inicio }}">
+            <input type="date" name="fecha_fin" class="col-span-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white shadow-sm text-sm" value="{{ fecha_fin }}">
+            <input type="number" step="0.01" name="monto_min" class="col-span-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white shadow-sm text-sm" placeholder="Monto mínimo" value="{{ monto_min }}">
+            <input type="number" step="0.01" name="monto_max" class="col-span-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white shadow-sm text-sm" placeholder="Monto máximo" value="{{ monto_max }}">
+            <input type="text" name="descripcion" class="col-span-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white shadow-sm text-sm" placeholder="Descripción" value="{{ descripcion }}">
+            <select name="orden" class="col-span-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white shadow-sm text-sm">
                 <option value="fecha_desc" {% if orden == "fecha_desc" %}selected{% endif %}>Más reciente</option>
                 <option value="fecha_asc" {% if orden == "fecha_asc" %}selected{% endif %}>Más antiguo</option>
                 <option value="monto_desc" {% if orden == "monto_desc" %}selected{% endif %}>Monto mayor</option>
                 <option value="monto_asc" {% if orden == "monto_asc" %}selected{% endif %}>Monto menor</option>
             </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-        </div>
-    </form>
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Monto</th>
-                    <th>Cuenta destino/origen</th>
-                    <th>Descripción</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for t in transacciones %}
-                <tr>
-                    <td>{{ t.fecha|date:"d/m/Y H:i" }}</td>
-                    <td>{{ t.tipo }}</td>
-                    <td>
-                        {% if t.cuenta_origen == cuenta %}
-                            <span class="text-danger">- S/. {{ t.monto }}</span>
-                        {% else %}
-                            <span class="text-success">+ S/. {{ t.monto }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if t.tipo == "TRANSFERENCIA" %}
-                            {% if t.cuenta_origen == cuenta %}
-                                {{ t.cuenta_destino.numero_cuenta }}
+            <button type="submit" class="cursor-pointer col-span-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl shadow-lg transition text-base hover:scale-[1.03]">
+                Filtrar
+            </button>
+        </form>
+        <div class="overflow-x-auto rounded-xl shadow">
+            <table class="min-w-full text-sm text-gray-700">
+                <thead class="bg-blue-100 text-blue-800">
+                    <tr>
+                        <th class="py-3 px-4 text-left font-semibold">Fecha</th>
+                        <th class="py-3 px-4 text-left font-semibold">Tipo</th>
+                        <th class="py-3 px-4 text-left font-semibold">Monto</th>
+                        <th class="py-3 px-4 text-left font-semibold">Cuenta destino/origen</th>
+                        <th class="py-3 px-4 text-left font-semibold">Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transacciones %}
+                    <tr class="hover:bg-blue-50 transition">
+                        <td class="py-2 px-4">{{ t.fecha|date:"d/m/Y H:i" }}</td>
+                        <td class="py-2 px-4">
+                            {% if t.tipo == "DEPOSITO" %}
+                                <span class="bg-green-100 text-green-700 px-2 py-1 rounded font-semibold">Depósito</span>
+                            {% elif t.tipo == "RETIRO" %}
+                                <span class="bg-red-100 text-red-700 px-2 py-1 rounded font-semibold">Retiro</span>
                             {% else %}
-                                {{ t.cuenta_origen.numero_cuenta }}
+                                <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-semibold">Transferencia</span>
                             {% endif %}
-                        {% else %}
-                            ---
-                        {% endif %}
-                    </td>
-                    <td>{{ t.descripcion|default:"-" }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center">No hay movimientos para mostrar.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                        <td class="py-2 px-4">
+                            {% if t.cuenta_origen == cuenta %}
+                                <span class="text-red-600 font-bold">- S/. {{ t.monto }}</span>
+                            {% else %}
+                                <span class="text-green-600 font-bold">+ S/. {{ t.monto }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4">
+                            {% if t.tipo == "TRANSFERENCIA" %}
+                                {% if t.cuenta_origen == cuenta %}
+                                    {{ t.cuenta_destino.numero_cuenta }}
+                                {% else %}
+                                    {{ t.cuenta_origen.numero_cuenta }}
+                                {% endif %}
+                            {% else %}
+                                <span class="text-gray-400">---</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4">{{ t.descripcion|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-gray-500">No hay movimientos para mostrar.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="flex justify-end">
+            <a href="{% url 'detalle_cuenta' cuenta.id %}" class="mt-6 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-xl shadow transition text-base text-center">
+                Volver
+            </a>
+        </div>
     </div>
-    <a href="{% url 'detalle_cuenta' cuenta.id %}" class="btn btn-secondary mt-3">Volver</a>
 </div>
 {% endblock %}

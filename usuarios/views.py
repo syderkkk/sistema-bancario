@@ -98,7 +98,7 @@ def editar_perfil(request):
         form = EditarPerfilForm(request.POST, instance=profile, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('editar_perfil')
     else:
         form = EditarPerfilForm(instance=profile, user=request.user)
     return render(request, 'usuarios/editar_perfil.html', {'form': form})
