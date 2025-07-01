@@ -6,7 +6,6 @@ from .forms import SolicitudPrestamoForm
 from cuentas.models import CuentaBancaria
 from utils.cola import ColaSolicitudes
 
-# Create your views here.
 @login_required
 def solicitar_prestamo(request, cuenta_id):
     tasa_interes = 10.0  # Puedes parametrizar esto
@@ -27,7 +26,6 @@ def solicitar_prestamo(request, cuenta_id):
         'tasa_interes': tasa_interes,
         'cuenta': cuenta,
     })
-
 
 @login_required
 def gestionar_solicitudes_prestamo(request):

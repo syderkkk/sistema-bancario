@@ -32,5 +32,5 @@ class ColaSolicitudes:
         if self.frente:
             return self.frente.solicitud
         return None
-    
-# Uso: cuentas/views.py ✅ Cola de solicitudes para transacciones pendientes
+
+# Uso: cuentas/views.py ✅ Cola de solicitudes de prestamo
