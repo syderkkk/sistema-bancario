@@ -49,11 +49,16 @@ def retirar_fondos(cuenta, monto, descripcion=""):
     )
 
 def transferir_fondos(cuenta_origen, cuenta_destino, monto, descripcion=""):
+    # Validar saldo suficiente
+    if cuenta_origen.saldo < monto:
+        raise ValueError("Saldo insuficiente para realizar la transferencia.")
+    
     with transaction.atomic():
         cuenta_origen.saldo -= monto
         cuenta_destino.saldo += monto
         cuenta_origen.save()
         cuenta_destino.save()
+    
     transaccion = Transaccion.objects.create(
         cuenta_origen=cuenta_origen,
         cuenta_destino=cuenta_destino,

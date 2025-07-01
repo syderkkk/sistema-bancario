@@ -1,50 +1,202 @@
 <header>
     <nav class="bg-blue-600 border-b border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 relative">
-            <a class="text-white font-bold text-2xl tracking-wide" href="{% url 'landing_page' %}">SISTEMA BANCARIO</a>
-            <!-- Menú de navegación siempre visible y responsivo -->
-            <div class="flex flex-col sm:flex-row w-full sm:w-auto bg-blue-600 sm:bg-transparent z-50 sm:z-auto shadow sm:shadow-none rounded-b-xl sm:rounded-none transition-all duration-300 ml-0 sm:ml-4">
-                <ul class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center p-4 sm:p-0 w-full sm:w-auto">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between h-14 sm:h-16 relative">
+            <!-- Logo responsive -->
+            <a class="text-white font-bold text-lg sm:text-xl md:text-2xl tracking-wide flex-shrink-0" href="{% url 'landing_page' %}">
+                <span class="hidden sm:inline">SISTEMA BANCARIO</span>
+                <span class="sm:hidden">BANCO</span>
+            </a>
+            
+            <!-- Botón hamburguesa para móvil -->
+            <button id="mobile-menu-button" class="md:hidden text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors" aria-label="Abrir menú">
+                <svg id="hamburger-icon" class="w-6 h-6 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <svg id="close-icon" class="w-6 h-6 hidden transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            
+            <!-- Menú de navegación responsive -->
+            <div id="mobile-menu" class="absolute top-full left-0 right-0 md:relative md:top-auto md:left-auto md:right-auto bg-blue-600 md:bg-transparent shadow-lg md:shadow-none border-t border-blue-500 md:border-none z-50 transform transition-all duration-300 ease-in-out md:transform-none hidden md:flex md:opacity-100">
+                <ul class="flex flex-col md:flex-row space-y-1 md:space-y-0 md:space-x-1 lg:space-x-2 items-stretch md:items-center p-2 md:p-0 w-full md:w-auto">
                     {% if user.is_authenticated %}
-                    <li>
-                        <a href="{% url 'home' %}" class="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow">Inicio</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'editar_perfil' %}" class="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow">Mi perfil</a>
-                    </li>
-                    {% if user.is_superuser %}
-                    <li>
-                        <a href="{% url 'gestionar_solicitudes_prestamo' %}"
-                            class="px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-bold hover:bg-yellow-500 transition shadow">
-                            Revisar solicitudes de préstamo
+                    <li class="w-full md:w-auto">
+                        <a href="{% url 'home' %}" class="block px-3 py-2 text-sm md:text-base rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow text-center md:text-left">
+                            Inicio
                         </a>
                     </li>
-                    <li>
+                    <li class="w-full md:w-auto">
+                        <a href="{% url 'editar_perfil' %}" class="block px-3 py-2 text-sm md:text-base rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow text-center md:text-left">
+                            Mi perfil
+                        </a>
+                    </li>
+                    {% if user.is_superuser %}
+                    <li class="w-full md:w-auto">
+                        <a href="{% url 'gestionar_solicitudes_prestamo' %}"
+                            class="block px-3 py-2 text-sm md:text-base rounded-lg bg-yellow-400 text-gray-900 font-bold hover:bg-yellow-500 transition shadow text-center md:text-left">
+                            <span class="hidden lg:inline">Revisar solicitudes de préstamo</span>
+                            <span class="lg:hidden">Solicitudes</span>
+                        </a>
+                    </li>
+                    <li class="w-full md:w-auto">
                         <a href="{% url 'historial_sesiones' %}"
-                            class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-700 transition shadow">
-                            Historial de sesiones
+                            class="block px-3 py-2 text-sm md:text-base rounded-lg bg-blue-500 text-white font-bold hover:bg-blue-700 transition shadow text-center md:text-left">
+                            <span class="hidden lg:inline">Historial de sesiones</span>
+                            <span class="lg:hidden">Historial</span>
                         </a>
                     </li>
                     {% endif %}
-                    <li>
-                        <span class="text-gray-200 px-3 py-2">Hola, {{ user.first_name }}</span>
+                    <li class="w-full md:w-auto border-t border-blue-500 md:border-none pt-2 md:pt-0">
+                        <span class="block text-gray-200 px-3 py-2 text-sm md:text-base text-center md:text-left">
+                            <span class="hidden sm:inline">Hola, {{ user.first_name }}</span>
+                            <span class="sm:hidden">{{ user.first_name }}</span>
+                        </span>
                     </li>
-                    <li>
-                        <form action="{% url 'logout' %}" method="post" class="inline">
+                    <li class="w-full md:w-auto">
+                        <form action="{% url 'logout' %}" method="post" class="w-full">
                             {% csrf_token %}
-                            <button type="submit" class="cursor-pointer px-4 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition shadow">Cerrar sesión</button>
+                            <button type="submit" class="w-full md:w-auto cursor-pointer px-3 py-2 text-sm md:text-base rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition shadow text-center">
+                                Cerrar sesión
+                            </button>
                         </form>
                     </li>
                     {% else %}
-                    <li>
-                        <a href="{% url 'registro' %}" class="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow">Registrarse</a>
+                    <li class="w-full md:w-auto">
+                        <a href="{% url 'registro' %}" class="block px-3 py-2 text-sm md:text-base rounded-lg bg-white/10 text-white hover:bg-white/20 font-medium transition shadow text-center md:text-left">
+                            Registrarse
+                        </a>
                     </li>
-                    <li>
-                        <a href="{% url 'login' %}" class="px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-800 font-medium transition shadow">Iniciar sesión</a>
+                    <li class="w-full md:w-auto">
+                        <a href="{% url 'login' %}" class="block px-3 py-2 text-sm md:text-base rounded-lg bg-blue-700 text-white hover:bg-blue-800 font-medium transition shadow text-center md:text-left">
+                            Iniciar sesión
+                        </a>
                     </li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
+    
+    <!-- Script mejorado para manejar el menú móvil -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const hamburgerIcon = document.getElementById('hamburger-icon');
+            const closeIcon = document.getElementById('close-icon');
+            
+            let isMenuOpen = false;
+            let isAnimating = false;
+            
+            if (mobileMenuButton && mobileMenu && hamburgerIcon && closeIcon) {
+                
+                // Función para abrir el menú
+                function openMenu() {
+                    if (isAnimating) return;
+                    isAnimating = true;
+                    isMenuOpen = true;
+                    
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenu.classList.add('opacity-0');
+                    
+                    // Cambiar iconos
+                    hamburgerIcon.classList.add('hidden');
+                    closeIcon.classList.remove('hidden');
+                    
+                    // Animar entrada
+                    requestAnimationFrame(() => {
+                        mobileMenu.classList.remove('opacity-0');
+                        mobileMenu.classList.add('opacity-100');
+                    });
+                    
+                    setTimeout(() => {
+                        isAnimating = false;
+                    }, 300);
+                }
+                
+                // Función para cerrar el menú
+                function closeMenu() {
+                    if (isAnimating) return;
+                    isAnimating = true;
+                    isMenuOpen = false;
+                    
+                    mobileMenu.classList.remove('opacity-100');
+                    mobileMenu.classList.add('opacity-0');
+                    
+                    // Cambiar iconos
+                    closeIcon.classList.add('hidden');
+                    hamburgerIcon.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        mobileMenu.classList.add('hidden');
+                        isAnimating = false;
+                    }, 300);
+                }
+                
+                // Event listener para el botón hamburguesa
+                mobileMenuButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (isAnimating) return;
+                    
+                    if (isMenuOpen) {
+                        closeMenu();
+                    } else {
+                        openMenu();
+                    }
+                });
+                
+                // Cerrar menú al hacer clic fuera
+                document.addEventListener('click', function(event) {
+                    if (isMenuOpen && !mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                        closeMenu();
+                    }
+                });
+                
+                // Cerrar menú al presionar Escape
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && isMenuOpen) {
+                        closeMenu();
+                    }
+                });
+                
+                // Manejar cambios de tamaño de pantalla
+                let resizeTimeout;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        if (window.innerWidth >= 768) { // md breakpoint
+                            // En desktop, mostrar menú y resetear estado
+                            mobileMenu.classList.remove('hidden', 'opacity-0');
+                            mobileMenu.classList.add('opacity-100');
+                            closeIcon.classList.add('hidden');
+                            hamburgerIcon.classList.remove('hidden');
+                            isMenuOpen = false;
+                            isAnimating = false;
+                        } else if (!isMenuOpen) {
+                            // En móvil, asegurar que esté oculto si no está abierto
+                            mobileMenu.classList.add('hidden');
+                            mobileMenu.classList.remove('opacity-100');
+                            closeIcon.classList.add('hidden');
+                            hamburgerIcon.classList.remove('hidden');
+                        }
+                    }, 100);
+                });
+                
+                // Cerrar menú al hacer clic en enlaces
+                const menuLinks = mobileMenu.querySelectorAll('a');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth < 768 && isMenuOpen) {
+                            setTimeout(() => {
+                                closeMenu();
+                            }, 100);
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </header>

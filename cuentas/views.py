@@ -46,8 +46,26 @@ def transferir(request, cuenta_id):
             numero_cuenta_destino = form.cleaned_data["numero_cuenta_destino"]
             monto = form.cleaned_data["monto"]
             descripcion = form.cleaned_data["descripcion"]
+            
+            # Validar saldo suficiente antes de transferir
+            if cuenta.saldo < monto:
+                messages.error(request, "Saldo insuficiente para realizar la transferencia.")
+                return render(request, "cuentas/transferir.html", {
+                    "cuenta": cuenta,
+                    "transferencia_form": form
+                })
+            
             try:
                 cuenta_destino = CuentaBancaria.objects.get(numero_cuenta=numero_cuenta_destino)
+                
+                # Validar que no sea la misma cuenta
+                if cuenta_destino.id == cuenta.id:
+                    messages.error(request, "No puedes transferir a la misma cuenta.")
+                    return render(request, "cuentas/transferir.html", {
+                        "cuenta": cuenta,
+                        "transferencia_form": form
+                    })
+                
                 transaccion = transferir_fondos(
                     cuenta, cuenta_destino, monto, descripcion
                 )
@@ -84,37 +102,84 @@ def cajero(request):
             if deposito_form.is_valid():
                 numero_cuenta = deposito_form.cleaned_data["numero_cuenta"]
                 monto = deposito_form.cleaned_data["monto"]
-                try:
-                    cuenta = CuentaBancaria.objects.get(numero_cuenta=numero_cuenta)
-                    depositar_fondos(cuenta, monto, descripcion="Depósito en cajero físico simulado")
-                    resultado = {
-                        "tipo": "depósito",
-                        "cuenta": cuenta,
-                        "monto": monto
-                    }
-                except CuentaBancaria.DoesNotExist:
-                    error = "La cuenta no existe."
+                
+                # Validar que el monto sea positivo
+                if monto <= 0:
+                    error = "El monto debe ser mayor a 0."
+                else:
+                    try:
+                        cuenta = CuentaBancaria.objects.get(numero_cuenta=numero_cuenta)
+                        depositar_fondos(cuenta, monto, descripcion="Depósito en cajero físico simulado")
+                        
+                        # Refrescar la cuenta para obtener el saldo actualizado
+                        cuenta.refresh_from_db()
+                        
+                        resultado = {
+                            "tipo": "depósito",
+                            "cuenta": cuenta,
+                            "monto": monto
+                        }
+                        
+                        # Limpiar el formulario después de éxito
+                        deposito_form = CajeroForm(prefix="deposito")
+                        
+                    except CuentaBancaria.DoesNotExist:
+                        error = "La cuenta no existe."
+                    except Exception as e:
+                        error = f"Error al procesar el depósito: {str(e)}"
+                        
         elif "retirar" in request.POST:
             retiro_form = CajeroForm(request.POST, prefix="retiro")
             clave = request.POST.get("clave")
+            
             if retiro_form.is_valid():
                 numero_cuenta = retiro_form.cleaned_data["numero_cuenta"]
                 monto = retiro_form.cleaned_data["monto"]
-                try:
-                    cuenta = CuentaBancaria.objects.get(numero_cuenta=numero_cuenta)
-                    if not cuenta.verificar_clave(clave):
-                        error = "Clave secreta incorrecta."
-                    else:
-                        retirar_fondos(cuenta, monto, descripcion="Retiro en cajero físico simulado")
-                        resultado = {
-                        "tipo": "retiro",
-                        "cuenta": cuenta,
-                        "monto": monto
-                    }
-                except CuentaBancaria.DoesNotExist:
-                    error = "La cuenta no existe."
-                except ValueError as e:
-                    error = str(e)
+                
+                # Validar que el monto sea positivo
+                if monto <= 0:
+                    error = "El monto debe ser mayor a 0."
+                elif not clave:
+                    error = "La clave secreta es requerida."
+                elif len(clave) < 4:
+                    error = "La clave debe tener al menos 4 caracteres."
+                else:
+                    try:
+                        cuenta = CuentaBancaria.objects.get(numero_cuenta=numero_cuenta)
+                        
+                        # Verificar clave secreta
+                        if not cuenta.clave_secreta:
+                            error = "Esta cuenta no tiene una clave secreta configurada."
+                        elif not cuenta.verificar_clave(clave):
+                            error = "Clave secreta incorrecta."
+                        elif cuenta.saldo < monto:
+                            error = "Saldo insuficiente."
+                        else:
+                            retirar_fondos(cuenta, monto, descripcion="Retiro en cajero físico simulado")
+                            
+                            # Refrescar la cuenta para obtener el saldo actualizado
+                            cuenta.refresh_from_db()
+                            
+                            resultado = {
+                                "tipo": "retiro",
+                                "cuenta": cuenta,
+                                "monto": monto
+                            }
+                            
+                            # Limpiar el formulario después de éxito
+                            retiro_form = CajeroForm(prefix="retiro")
+                            
+                    except CuentaBancaria.DoesNotExist:
+                        error = "La cuenta no existe."
+                    except ValueError as e:
+                        error = str(e)
+                    except Exception as e:
+                        error = f"Error al procesar el retiro: {str(e)}"
+            else:
+                # Si el formulario no es válido, mostrar errores
+                if retiro_form.errors:
+                    error = "Por favor corrige los errores en el formulario."
+                    
     return render(request, "cuentas/cajero.html", {
         "deposito_form": deposito_form,
         "retiro_form": retiro_form,

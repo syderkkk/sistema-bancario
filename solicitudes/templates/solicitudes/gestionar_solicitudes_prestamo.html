@@ -1,99 +1,296 @@
 {% extends "usuarios/base.html" %}
 {% block title %}Gestionar Solicitudes de Préstamo{% endblock %}
 {% block content %}
-<div class="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 py-8">
-    <div class="w-full max-w-6xl bg-white/95 rounded-3xl shadow-2xl px-8 py-8">
-        <h3 class="text-2xl font-extrabold text-blue-700 mb-6 text-center">Solicitudes de Préstamo Pendientes</h3>
-        <div class="overflow-x-auto rounded-xl shadow mb-8">
-            <table class="min-w-full text-sm text-gray-700">
-                <thead class="bg-blue-100 text-blue-800">
-                    <tr>
-                        <th class="py-3 px-4 font-semibold">ID</th>
-                        <th class="py-3 px-4 font-semibold">Usuario</th>
-                        <th class="py-3 px-4 font-semibold">Cuenta</th>
-                        <th class="py-3 px-4 font-semibold">Monto</th>
-                        <th class="py-3 px-4 font-semibold">Plazo (meses)</th>
-                        <th class="py-3 px-4 font-semibold">Tasa (%)</th>
-                        <th class="py-3 px-4 font-semibold">Motivo</th>
-                        <th class="py-3 px-4 font-semibold">Fecha</th>
-                        <th class="py-3 px-4 font-semibold">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for s in pendientes %}
-                    <tr class="hover:bg-blue-50 transition">
-                        <td class="py-2 px-4">{{ s.id }}</td>
-                        <td class="py-2 px-4">{{ s.usuario.username }}</td>
-                        <td class="py-2 px-4">{{ s.cuenta.numero_cuenta }}</td>
-                        <td class="py-2 px-4">S/. {{ s.monto }}</td>
-                        <td class="py-2 px-4">{{ s.plazo_meses }}</td>
-                        <td class="py-2 px-4">{{ s.tasa_interes }}</td>
-                        <td class="py-2 px-4">{{ s.motivo|default:"-" }}</td>
-                        <td class="py-2 px-4">{{ s.fecha_solicitud|date:"d/m/Y H:i" }}</td>
-                        <td class="py-2 px-4">
-                            {% if s == primera_pendiente %}
-                            <form method="post" action="{% url 'cambiar_estado_solicitud' s.id %}" class="inline">
-                                {% csrf_token %}
-                                <button name="accion" value="aceptar" class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded-xl shadow text-xs mr-1 transition">Aceptar</button>
-                                <button name="accion" value="rechazar" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-xl shadow text-xs transition">Rechazar</button>
-                            </form>
-                            {% else %}
-                            <span class="text-gray-400 italic">En espera</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="9" class="text-center py-4 text-gray-500">No hay solicitudes pendientes.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="min-h-[80vh] bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 py-4 sm:py-6 lg:py-8 px-2 sm:px-4">
+    <div class="w-full max-w-xs sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto bg-white/95 rounded-2xl sm:rounded-3xl shadow-2xl px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        
+        <!-- Título principal responsive -->
+        <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-blue-700 mb-4 sm:mb-6 text-center leading-tight">
+            <span class="hidden sm:inline">Gestionar Solicitudes de Préstamo</span>
+            <span class="sm:hidden">Solicitudes de Préstamo</span>
+        </h1>
+        
+        <!-- Sección de solicitudes pendientes -->
+        <div class="mb-6 sm:mb-8 lg:mb-10">
+            <h2 class="text-base sm:text-lg md:text-xl lg:text-2xl font-extrabold text-blue-700 mb-3 sm:mb-4 lg:mb-6 text-center">
+                <span class="hidden md:inline">Solicitudes Pendientes</span>
+                <span class="md:hidden">Pendientes</span>
+            </h2>
+            
+            <!-- Vista de escritorio -->
+            <div class="hidden lg:block overflow-x-auto rounded-xl shadow">
+                <table class="min-w-full text-sm text-gray-700">
+                    <thead class="bg-blue-100 text-blue-800">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold">ID</th>
+                            <th class="py-3 px-4 font-semibold">Usuario</th>
+                            <th class="py-3 px-4 font-semibold">Cuenta</th>
+                            <th class="py-3 px-4 font-semibold">Monto</th>
+                            <th class="py-3 px-4 font-semibold">Plazo</th>
+                            <th class="py-3 px-4 font-semibold">Tasa</th>
+                            <th class="py-3 px-4 font-semibold">Motivo</th>
+                            <th class="py-3 px-4 font-semibold">Fecha</th>
+                            <th class="py-3 px-4 font-semibold">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in pendientes %}
+                        <tr class="hover:bg-blue-50 transition">
+                            <td class="py-2 px-4">#{{ s.id }}</td>
+                            <td class="py-2 px-4">{{ s.usuario.username }}</td>
+                            <td class="py-2 px-4">{{ s.cuenta.numero_cuenta }}</td>
+                            <td class="py-2 px-4">S/. {{ s.monto }}</td>
+                            <td class="py-2 px-4">{{ s.plazo_meses }}m</td>
+                            <td class="py-2 px-4">{{ s.tasa_interes }}%</td>
+                            <td class="py-2 px-4">{{ s.motivo|default:"-"|truncatechars:20 }}</td>
+                            <td class="py-2 px-4">{{ s.fecha_solicitud|date:"d/m/Y" }}</td>
+                            <td class="py-2 px-4">
+                                {% if s == primera_pendiente %}
+                                <form method="post" action="{% url 'cambiar_estado_solicitud' s.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button name="accion" value="aceptar" class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded-xl shadow text-xs mr-1 transition">Aceptar</button>
+                                    <button name="accion" value="rechazar" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-xl shadow text-xs transition">Rechazar</button>
+                                </form>
+                                {% else %}
+                                <span class="text-gray-400 italic text-xs">En espera</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-4 text-gray-500">No hay solicitudes pendientes.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Vista móvil y tablet -->
+            <div class="lg:hidden space-y-3 sm:space-y-4">
+                {% for s in pendientes %}
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 p-3 sm:p-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 sm:mb-3">
+                        <div class="flex items-center space-x-2 mb-2 sm:mb-0">
+                            <span class="text-xs sm:text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-lg">#{{ s.id }}</span>
+                            <span class="text-sm sm:text-base font-semibold text-gray-800">{{ s.usuario.username }}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">{{ s.fecha_solicitud|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm mb-3 sm:mb-4">
+                        <div>
+                            <span class="text-gray-600 font-medium">Cuenta:</span>
+                            <span class="font-mono">{{ s.cuenta.numero_cuenta }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 font-medium">Monto:</span>
+                            <span class="font-bold text-green-600">S/. {{ s.monto }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 font-medium">Plazo:</span>
+                            <span>{{ s.plazo_meses }} meses</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 font-medium">Tasa:</span>
+                            <span>{{ s.tasa_interes }}%</span>
+                        </div>
+                    </div>
+                    
+                    {% if s.motivo %}
+                    <div class="mb-3 sm:mb-4">
+                        <span class="text-gray-600 font-medium text-xs sm:text-sm">Motivo:</span>
+                        <p class="text-xs sm:text-sm text-gray-700 mt-1">{{ s.motivo }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex justify-center">
+                        {% if s == primera_pendiente %}
+                        <form method="post" action="{% url 'cambiar_estado_solicitud' s.id %}" class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                            {% csrf_token %}
+                            <button name="accion" value="aceptar" class="flex-1 sm:flex-none bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 sm:px-6 rounded-xl shadow text-sm transition">
+                                Aceptar
+                            </button>
+                            <button name="accion" value="rechazar" class="flex-1 sm:flex-none bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 sm:px-6 rounded-xl shadow text-sm transition">
+                                Rechazar
+                            </button>
+                        </form>
+                        {% else %}
+                        <div class="bg-gray-100 text-gray-500 px-4 py-2 rounded-xl text-sm text-center italic">
+                            En espera
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-8 text-gray-500">
+                    <div class="text-4xl sm:text-5xl mb-3">📋</div>
+                    <p class="text-sm sm:text-base">No hay solicitudes pendientes</p>
+                </div>
+                {% endfor %}
+            </div>
         </div>
 
-        <h3 class="text-2xl font-extrabold text-blue-700 mb-6 text-center mt-10">Solicitudes Aceptadas y Rechazadas</h3>
-        <div class="overflow-x-auto rounded-xl shadow">
-            <table class="min-w-full text-sm text-gray-700">
-                <thead class="bg-blue-100 text-blue-800">
-                    <tr>
-                        <th class="py-3 px-4 font-semibold">ID</th>
-                        <th class="py-3 px-4 font-semibold">Usuario</th>
-                        <th class="py-3 px-4 font-semibold">Cuenta</th>
-                        <th class="py-3 px-4 font-semibold">Monto</th>
-                        <th class="py-3 px-4 font-semibold">Plazo (meses)</th>
-                        <th class="py-3 px-4 font-semibold">Tasa (%)</th>
-                        <th class="py-3 px-4 font-semibold">Motivo</th>
-                        <th class="py-3 px-4 font-semibold">Estado</th>
-                        <th class="py-3 px-4 font-semibold">Fecha</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for s in gestionadas %}
-                    <tr class="hover:bg-blue-50 transition">
-                        <td class="py-2 px-4">{{ s.id }}</td>
-                        <td class="py-2 px-4">{{ s.usuario.username }}</td>
-                        <td class="py-2 px-4">{{ s.cuenta.numero_cuenta }}</td>
-                        <td class="py-2 px-4">S/. {{ s.monto }}</td>
-                        <td class="py-2 px-4">{{ s.plazo_meses }}</td>
-                        <td class="py-2 px-4">{{ s.tasa_interes }}</td>
-                        <td class="py-2 px-4">{{ s.motivo|default:"-" }}</td>
-                        <td class="py-2 px-4">
+        <!-- Sección de solicitudes gestionadas -->
+        <div>
+            <h2 class="text-base sm:text-lg md:text-xl lg:text-2xl font-extrabold text-blue-700 mb-3 sm:mb-4 lg:mb-6 text-center">
+                <span class="hidden md:inline">Solicitudes Aceptadas y Rechazadas</span>
+                <span class="md:hidden">Historial</span>
+            </h2>
+            
+            <!-- Vista de escritorio -->
+            <div class="hidden lg:block overflow-x-auto rounded-xl shadow">
+                <table class="min-w-full text-sm text-gray-700">
+                    <thead class="bg-blue-100 text-blue-800">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold">ID</th>
+                            <th class="py-3 px-4 font-semibold">Usuario</th>
+                            <th class="py-3 px-4 font-semibold">Cuenta</th>
+                            <th class="py-3 px-4 font-semibold">Monto</th>
+                            <th class="py-3 px-4 font-semibold">Plazo</th>
+                            <th class="py-3 px-4 font-semibold">Tasa</th>
+                            <th class="py-3 px-4 font-semibold">Motivo</th>
+                            <th class="py-3 px-4 font-semibold">Estado</th>
+                            <th class="py-3 px-4 font-semibold">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in gestionadas %}
+                        <tr class="hover:bg-blue-50 transition">
+                            <td class="py-2 px-4">#{{ s.id }}</td>
+                            <td class="py-2 px-4">{{ s.usuario.username }}</td>
+                            <td class="py-2 px-4">{{ s.cuenta.numero_cuenta }}</td>
+                            <td class="py-2 px-4">S/. {{ s.monto }}</td>
+                            <td class="py-2 px-4">{{ s.plazo_meses }}m</td>
+                            <td class="py-2 px-4">{{ s.tasa_interes }}%</td>
+                            <td class="py-2 px-4">{{ s.motivo|default:"-"|truncatechars:20 }}</td>
+                            <td class="py-2 px-4">
+                                {% if s.estado == "aceptada" %}
+                                <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-xl font-semibold text-xs">Aceptada</span>
+                                {% else %}
+                                <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-xl font-semibold text-xs">Rechazada</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-2 px-4">{{ s.fecha_solicitud|date:"d/m/Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-4 text-gray-500">No hay solicitudes gestionadas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Vista móvil y tablet -->
+            <div class="lg:hidden space-y-3 sm:space-y-4">
+                {% for s in gestionadas %}
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 p-3 sm:p-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 sm:mb-3">
+                        <div class="flex items-center space-x-2 mb-2 sm:mb-0">
+                            <span class="text-xs sm:text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-lg">#{{ s.id }}</span>
+                            <span class="text-sm sm:text-base font-semibold text-gray-800">{{ s.usuario.username }}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
                             {% if s.estado == "aceptada" %}
-                            <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-xl font-semibold text-xs">Aceptada</span>
+                            <span class="inline-block bg-green-100 text-green-700 px-2 py-1 rounded-lg font-semibold text-xs">✓ Aceptada</span>
                             {% else %}
-                            <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-xl font-semibold text-xs">Rechazada</span>
+                            <span class="inline-block bg-red-100 text-red-700 px-2 py-1 rounded-lg font-semibold text-xs">✗ Rechazada</span>
                             {% endif %}
-                        </td>
-                        <td class="py-2 px-4">{{ s.fecha_solicitud|date:"d/m/Y H:i" }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="9" class="text-center py-4 text-gray-500">No hay solicitudes aceptadas ni rechazadas.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm mb-2">
+                        <div>
+                            <span class="text-gray-600 font-medium">Cuenta:</span>
+                            <span class="font-mono">{{ s.cuenta.numero_cuenta }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 font-medium">Monto:</span>
+                            <span class="font-bold text-green-600">S/. {{ s.monto }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 font-medium">Plazo:</span>
+                            <span>{{ s.plazo_meses }} meses</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 font-medium">Fecha:</span>
+                            <span>{{ s.fecha_solicitud|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+                    
+                    {% if s.motivo %}
+                    <div class="mt-2">
+                        <span class="text-gray-600 font-medium text-xs sm:text-sm">Motivo:</span>
+                        <p class="text-xs sm:text-sm text-gray-700 mt-1">{{ s.motivo }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="text-center py-8 text-gray-500">
+                    <div class="text-4xl sm:text-5xl mb-3">📁</div>
+                    <p class="text-sm sm:text-base">No hay solicitudes gestionadas</p>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Script para mejorar la experiencia en móviles -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Confirmar acciones en móviles
+    const actionButtons = document.querySelectorAll('button[name="accion"]');
+    actionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            const action = this.value;
+            const actionText = action === 'aceptar' ? 'aceptar' : 'rechazar';
+            
+            if (!confirm(`¿Estás seguro de que quieres ${actionText} esta solicitud?`)) {
+                e.preventDefault();
+            }
+        });
+    });
+    
+    // Smooth scroll para navegación
+    if (window.location.hash) {
+        document.querySelector(window.location.hash)?.scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
+});
+</script>
+
+<!-- Estilos adicionales para mejor responsive -->
+<style>
+@media (max-width: 640px) {
+    /* Mejorar spacing en móviles */
+    .space-y-3 > * + * {
+        margin-top: 0.75rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    /* Optimizar tabla en desktop */
+    table {
+        table-layout: auto;
+    }
+    
+    th, td {
+        white-space: nowrap;
+    }
+}
+
+/* Animaciones suaves */
+.transition {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Mejorar hover en touch devices */
+@media (hover: hover) {
+    .hover\:bg-blue-50:hover {
+        background-color: rgb(239 246 255);
+    }
+}
+</style>
 {% endblock %}
