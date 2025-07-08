@@ -29,26 +29,32 @@
         <!-- Lado derecho: carrusel -->
         <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 bg-[#F0F4F4] relative">
             <div class="w-full max-w-xs mx-auto">
-                <div class="relative flex justify-center items-center min-h-[260px]">
+                <div class="relative flex flex-col justify-center items-center min-h-[260px]">
                     {% if imagen_actual %}
-                        <!-- Botón anterior -->
-                        <a href="?pos={{ pos|add:'-1' }}"
-                            class="absolute left-0 top-1/2 -translate-y-1/2 bg-white text-blue-600 hover:bg-blue-100 shadow-lg rounded-full flex items-center justify-center w-12 h-12 z-10 transition border border-blue-200 focus:ring-2 focus:ring-blue-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
-                        </a>
+                        <!-- Miniaturas de anterior y siguiente -->
+                        <div class="flex justify-between w-full mb-2">
+                            <img src="{% static imagen_anterior %}" alt="Anterior" style="width: 50px; border-radius: 8px; border: 2px solid #cbd5e1;">
+                            <img src="{% static imagen_siguiente %}" alt="Siguiente" style="width: 50px; border-radius: 8px; border: 2px solid #cbd5e1;">
+                        </div>
                         <!-- Imagen del carrusel -->
                         <img src="{% static imagen_actual %}"
-                            class="mx-auto max-w-xs w-full rounded-2xl shadow-2xl border-4 border-white transition duration-300 hover:scale-105"
-                            alt="Promoción">
-                        <!-- Botón siguiente -->
-                        <a href="?pos={{ pos|add:'1' }}"
-                            class="absolute right-0 top-1/2 -translate-y-1/2 bg-white text-blue-600 hover:bg-blue-100 shadow-lg rounded-full flex items-center justify-center w-12 h-12 z-10 transition border border-blue-200 focus:ring-2 focus:ring-blue-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </a>
+                            class="mx-auto max-w-xs w-full rounded-2xl shadow-2xl border-4 border-white transition duration-300 hover:scale-105 mb-4"
+                            alt="Promoción actual">
+                        <!-- Botones de navegación usando posiciones circulares -->
+                        <div class="flex justify-between w-full">
+                            <a href="?pos={{ pos_anterior }}"
+                                class="bg-white text-blue-600 hover:bg-blue-100 shadow-lg rounded-full flex items-center justify-center w-12 h-12 transition border border-blue-200 focus:ring-2 focus:ring-blue-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </a>
+                            <a href="?pos={{ pos_siguiente }}"
+                                class="bg-white text-blue-600 hover:bg-blue-100 shadow-lg rounded-full flex items-center justify-center w-12 h-12 transition border border-blue-200 focus:ring-2 focus:ring-blue-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
                     {% else %}
                         <p class="text-gray-400">No hay imágenes para mostrar.</p>
                     {% endif %}

@@ -62,15 +62,25 @@ def landing_page(request):
     longitud = lista.longitud()
     if longitud == 0:
         imagen_actual = None
+        imagen_anterior = None
+        imagen_siguiente = None
+        pos_anterior = pos_siguiente = 0    
     else:
         pos = pos % longitud  # Circular
-        nodo = lista.buscar(pos)
-        imagen_actual = nodo.imagen
+        imagen_actual = lista.obtener_actual(pos)
+        imagen_anterior = lista.obtener_anterior(pos)
+        imagen_siguiente = lista.obtener_siguiente(pos)
+        pos_anterior = (pos - 1) % longitud
+        pos_siguiente = (pos + 1) % longitud
 
     return render(request, 'usuarios/landing.html', {
         'imagen_actual': imagen_actual,
+        'imagen_anterior': imagen_anterior,
+        'imagen_siguiente': imagen_siguiente,
         'pos': pos,
-        'longitud': longitud
+        'longitud': longitud,
+        'pos_anterior': pos_anterior,
+        'pos_siguiente': pos_siguiente
     })
 
 # Vista para la página de inicio después de iniciar sesión

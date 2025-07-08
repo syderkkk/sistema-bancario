@@ -25,6 +25,7 @@ def detalle_cuenta(request, cuenta_id):
     
     for t in transacciones_qs:
         historial.agregar(t)
+
     if request.method == "POST":
         if "generar_tarjeta" in request.POST and not cuenta.tarjeta.exists():
             crear_tarjeta_para_cuenta(cuenta)
@@ -34,7 +35,7 @@ def detalle_cuenta(request, cuenta_id):
     return render(request, 'cuentas/detalle_cuenta.html', {
         'cuenta': cuenta,
         'transferencia_form': transferencia_form,
-        'transacciones': historial.iterar_recientes()
+        'transacciones': list(historial.iterar_recientes())
     })
 
 @login_required

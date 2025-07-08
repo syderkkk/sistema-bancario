@@ -3,6 +3,16 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'cuentas/tarjeta.css' %}">
 
+<div class="header">
+    <a class="btn-back" href="{% url 'detalle_cuenta' tarjeta.cuenta.id %}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Atrás
+    </a>
+</div>
+
+
 <div class="card-container">
     <div class="credit-card" id="tarjeta">
         <!-- Cara frontal -->
@@ -12,7 +22,8 @@
                 <div class="card-logo">CPP</div>
             </div>
             <div class="card-number">
-                {{ tarjeta.numero_tarjeta|slice:":4" }} {{ tarjeta.numero_tarjeta|slice:"4:8" }} {{ tarjeta.numero_tarjeta|slice:"8:12" }} {{ tarjeta.numero_tarjeta|slice:"12:16" }}
+                {{ tarjeta.numero_tarjeta|slice:":4" }} {{ tarjeta.numero_tarjeta|slice:"4:8" }}
+                {{ tarjeta.numero_tarjeta|slice:"8:12" }} {{ tarjeta.numero_tarjeta|slice:"12:16" }}
             </div>
             <div class="card-details">
                 <div>
@@ -21,7 +32,8 @@
                 </div>
                 <div>
                     <div style="font-size:0.8rem;">TITULAR</div>
-                    <div>{{ tarjeta.cuenta.usuario.first_name|default:"Usuario" }} {{ tarjeta.cuenta.usuario.last_name|default:"" }}</div>
+                    <div>{{ tarjeta.cuenta.usuario.first_name|default:"Usuario" }}
+                        {{ tarjeta.cuenta.usuario.last_name|default:"" }}</div>
                 </div>
             </div>
         </div>
@@ -33,13 +45,13 @@
         </div>
     </div>
     <div class="card-info-text">
-    <small>Haz click en la tarjeta para ver el reverso</small>
-</div>
+        <small>Haz click en la tarjeta para ver el reverso</small>
+    </div>
 </div>
 
 <script>
-document.getElementById('tarjeta').addEventListener('click', function() {
-    this.classList.toggle('flipped');
-});
+    document.getElementById('tarjeta').addEventListener('click', function () {
+        this.classList.toggle('flipped');
+    }); 
 </script>
 {% endblock %}

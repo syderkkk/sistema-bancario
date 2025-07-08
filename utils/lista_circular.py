@@ -46,4 +46,21 @@ class ListaCircular:
             x = x.siguiente
         return count
     
+    def obtener_actual(self, pos):
+        if self.longitud() == 0:
+            return None
+        return self.buscar(pos % self.longitud()).imagen
+
+    def obtener_anterior(self, pos):
+        if self.longitud() == 0:
+            return None
+        nodo = self.buscar(pos % self.longitud())
+        return nodo.anterior.imagen
+
+    def obtener_siguiente(self, pos):
+        if self.longitud() == 0:
+            return None
+        nodo = self.buscar(pos % self.longitud())
+        return nodo.siguiente.imagen
+    
 # Uso: usuarios/views.py ✅ Carrusel de imágenes en la landing page
